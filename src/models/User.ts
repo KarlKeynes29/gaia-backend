@@ -56,7 +56,7 @@ export class User extends Model {
 
     @Column({
         type: DataType.DATEONLY,
-        defaultValue: '',
+        defaultValue: null,
         allowNull: true
     })
     birthday!: string;

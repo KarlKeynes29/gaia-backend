@@ -56,3 +56,4 @@ const seed = async () => {
         await sequelize.close();
     }
 }
+seed();

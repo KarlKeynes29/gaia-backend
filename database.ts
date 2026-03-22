@@ -3,12 +3,13 @@ import { User, Game, Cart, CartItem } from './src/models';
 
 export const sequelize = new Sequelize({
     dialect: 'postgres',
-    logging: (log) => console.log(log),
-    port: 5432,
+    logging: false,
+    host: process.env.DB_HOST || 'localhost',
+    port: Number(process.env.DB_PORT) || 5432,
     username: 'postgres',
-    password: 'password',
-    database: 'gaia_backend',
-    models: [User, Game, Cart, CartItem]
+    password: 'password1234',
+    database: process.env.DB_NAME || 'gaia_backend',
+    models: [User, Game, Cart, CartItem],
 });
 
 export const initializeDb = async () => {
