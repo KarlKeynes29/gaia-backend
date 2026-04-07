@@ -20,7 +20,6 @@ export class Game extends Model {
     title!: string;
 
     @Column({
-        // Text is used for larger string content.
         type: DataType.TEXT,
         allowNull: false
     })
@@ -38,19 +37,19 @@ export class Game extends Model {
         allowNull: false,
         defaultValue: false
     })
-    isAvailable!: boolean;
+    is_available!: boolean;
 
     @Column({
         type: DataType.BOOLEAN,
         allowNull: false,
         defaultValue: false
     })
-    onDiscount!: boolean;
+    on_discount!: boolean;
 
     @Column({
         type: DataType.BOOLEAN,
         allowNull: false,
         defaultValue: false
     })
-    isFeatured!: boolean;
+    is_featured!: boolean;
 }

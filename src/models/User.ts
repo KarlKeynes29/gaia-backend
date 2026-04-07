@@ -1,8 +1,17 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, DefaultScope, Scopes } from 'sequelize-typescript';
 
+@DefaultScope(() => ({
+    // attributes: { exclude: ['password'] }
+
+    // This method is more explicit, but you have to add the name of the new column if another one is added hehehe.
+    attributes: [ 'id', 'username', 'first_name', 'middle_name', 'last_name', 'email', 'birthday', 'phone_number', 'address', 'role' ]
+}))
+@Scopes(() => ({
+    withPassword: { attributes: { include: ['password'] } }
+}))
 @Table({
     tableName: 'users',
-    timestamps: true,    
+    timestamps: true,
 })
 export class User extends Model {
     @Column({
@@ -21,7 +30,8 @@ export class User extends Model {
 
     @Column({
         type: DataType.STRING,
-        allowNull: false
+        allowNull: false,
+        get() { return this.getDataValue('password'); }
     })
     password!: string;
 
@@ -30,21 +40,21 @@ export class User extends Model {
         defaultValue: '',
         allowNull: false
     })
-    firstName!: string;
+    first_name!: string;
 
     @Column({
         type: DataType.STRING,
         defaultValue: '',
         allowNull: true
     })
-    middleName!: string;
+    middle_name!: string;
 
     @Column({
         type: DataType.STRING,
         defaultValue: '',
         allowNull: true
     })
-    lastName!: string;
+    last_name!: string;
 
     @Column({
         type: DataType.STRING,
@@ -66,7 +76,7 @@ export class User extends Model {
         defaultValue: '',
         allowNull: true
     })
-    phoneNumber!: string;
+    phone_number!: string;
 
     @Column({
         type: DataType.STRING,

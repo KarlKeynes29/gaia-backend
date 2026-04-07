@@ -20,14 +20,14 @@ export class CartItem extends Model {
         type: DataType.UUID,
         allowNull: false
     })
-    cartId!: string;
+    cart_id!: string;
 
     @ForeignKey(() => Game)
     @Column({
         type: DataType.UUID,
         allowNull: false
     })
-    gameId!: string;
+    game_id!: string;
 
     @Column({
         type: DataType.INTEGER,

@@ -12,17 +12,16 @@ export class Cart extends Model {
     @Column({
         type: DataType.UUID,
         defaultValue: DataType.UUIDV4,
-        allowNull: false,
         primaryKey: true
     })
-    id!: string;  
+    declare id: string;
 
     @ForeignKey(() => User)
     @Column({
         type: DataType.UUID,
         allowNull: false
     })
-    userId!: string;
+    user_id!: string;
 
     @Column({
         type: DataType.ENUM('ACTIVE', 'ABANDONED', 'CHECKED_OUT'),
