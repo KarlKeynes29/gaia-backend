@@ -19,7 +19,7 @@ export class User extends Model {
        defaultValue: DataType.UUIDV4,
        primaryKey: true
     }) 
-    id!: string;
+    declare id!: string;
 
     @Column({
         type: DataType.STRING,
@@ -52,7 +52,7 @@ export class User extends Model {
     @Column({
         type: DataType.STRING,
         defaultValue: '',
-        allowNull: true
+        allowNull: false
     })
     last_name!: string;
 

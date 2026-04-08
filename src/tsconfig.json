@@ -13,7 +13,7 @@
     "useDefineForClassFields": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "strictPropertyInitialization": true,
+    "strictPropertyInitialization": false,
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     // For nodejs:
@@ -41,7 +41,7 @@
     // Recommended Options
     "jsx": "react-jsx",
     "verbatimModuleSyntax": false,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
   },
