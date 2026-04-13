@@ -1,16 +1,17 @@
 import { Table, Column, Model, DataType, DefaultScope, Scopes } from 'sequelize-typescript';
-
+ 
 @DefaultScope(() => ({
     // attributes: { exclude: ['password'] }
 
     // This method is more explicit, but you have to add the name of the new column if another one is added hehehe.
-    attributes: [ 'id', 'username', 'first_name', 'middle_name', 'last_name', 'email', 'birthday', 'phone_number', 'address', 'role' ]
+    attributes: ['id', 'username', 'first_name', 'middle_name', 'last_name', 'email', 'birthday', 'phone_number', 'address', 'role', 'deleted_at']
 }))
 @Scopes(() => ({
     withPassword: { attributes: { include: ['password'] } }
 }))
 @Table({
     tableName: 'users',
+    paranoid: true,
     timestamps: true,
 })
 export class User extends Model {
@@ -91,4 +92,10 @@ export class User extends Model {
         allowNull: false
     })
     role!: string;
+
+    @Column({
+        type: DataType.DATE,
+        allowNull: true
+    })
+    declare deleted_at!: Date | null;
 }
