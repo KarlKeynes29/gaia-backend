@@ -1,101 +1,94 @@
-import { Table, Column, Model, DataType, DefaultScope, Scopes } from 'sequelize-typescript';
- 
-@DefaultScope(() => ({
-    // attributes: { exclude: ['password'] }
+import { Model, DataTypes, Sequelize } from 'sequelize';
 
-    // This method is more explicit, but you have to add the name of the new column if another one is added hehehe.
-    attributes: ['id', 'username', 'first_name', 'middle_name', 'last_name', 'email', 'birthday', 'phone_number', 'address', 'role', 'deleted_at']
-}))
-@Scopes(() => ({
-    withPassword: { attributes: { include: ['password'] } }
-}))
-@Table({
-    tableName: 'users',
-    paranoid: true,
-    timestamps: true,
-})
 export class User extends Model {
-    @Column({
-       type: DataType.UUID,
-       defaultValue: DataType.UUIDV4,
-       primaryKey: true
-    }) 
-    declare id!: string;
-
-    @Column({
-        type: DataType.STRING,
-        defaultValue: '',
-        allowNull: false
-    })
-    username!: string;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-        get() { return this.getDataValue('password'); }
-    })
-    password!: string;
-
-    @Column({
-        type: DataType.STRING,
-        defaultValue: '',
-        allowNull: false
-    })
-    first_name!: string;
-
-    @Column({
-        type: DataType.STRING,
-        defaultValue: '',
-        allowNull: true
-    })
-    middle_name!: string;
-
-    @Column({
-        type: DataType.STRING,
-        defaultValue: '',
-        allowNull: false
-    })
-    last_name!: string;
-
-    @Column({
-        type: DataType.STRING,
-        defaultValue: '',
-        allowNull: false,
-        unique: true
-    })
-    email!: string;
-
-    @Column({
-        type: DataType.DATEONLY,
-        defaultValue: null,
-        allowNull: true
-    })
-    birthday!: string;
-
-    @Column({
-        type: DataType.STRING,
-        defaultValue: '',
-        allowNull: true
-    })
-    phone_number!: string;
-
-    @Column({
-        type: DataType.STRING,
-        defaultValue: '',
-        allowNull: true
-    })
-    address!: string;
-
-    @Column({
-        type: DataType.ENUM('ADMIN', 'USER'),
-        defaultValue: 'USER',
-        allowNull: false
-    })
-    role!: string;
-
-    @Column({
-        type: DataType.DATE,
-        allowNull: true
-    })
-    declare deleted_at!: Date | null;
+  declare id: string;
+  declare first_name: string;
+  declare middle_name: string | null;
+  declare last_name: string;
+  declare username: string;
+  declare password: string;
+  declare email: string;
+  declare birthday: Date | null;
+  declare phone_number: string | null;
+  declare address: string | null;
+  declare role: string;
+  declare deleted_at: Date | null;
 }
+
+export const initUserModel = (sequelize: Sequelize) => {
+  User.init({
+    id: {
+		type: DataTypes.UUID,
+		defaultValue: DataTypes.UUIDV4,
+		primaryKey: true,
+    },
+    first_name: {
+		type: DataTypes.STRING,
+		allowNull: false,
+    },
+    middle_name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+    },
+    last_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    username: {
+		type: DataTypes.STRING,
+		allowNull: false,
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+		validate: {
+			notEmpty: true,
+			// length :D
+			len: [8, 128],
+		}
+    },
+    email: {
+		type: DataTypes.STRING,
+		allowNull: false,
+		unique: true,
+    },
+    birthday: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null
+    },
+    phone_number: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+    },
+    address: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: null
+    },
+    role: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'user'
+    },
+    deleted_at: {
+		type: DataTypes.DATE,
+		allowNull: true,
+    }
+  	}, {
+	sequelize,
+	tableName: 'users',
+	paranoid: true,
+	underscored: true, 
+	defaultScope: {
+		attributes: { exclude: ['password'] }
+	},
+	scopes: {
+		withPassword: {
+			attributes: { include: ['password'] },
+		}
+	}
+  });
+};
