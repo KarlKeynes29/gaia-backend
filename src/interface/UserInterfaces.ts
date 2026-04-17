@@ -10,3 +10,7 @@ export interface CreateUserInterface {
     address?: string;
     role: string;
 }
+
+export interface UserParams {
+    id: string;
+}

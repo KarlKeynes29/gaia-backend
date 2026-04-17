@@ -11,7 +11,7 @@ export class User extends Model {
   declare birthday: Date | null;
   declare phone_number: string | null;
   declare address: string | null;
-  declare role: string;
+  declare role: 'USER' | 'ADMIN';
   declare deleted_at: Date | null;
 }
 
@@ -40,11 +40,11 @@ export const initUserModel = (sequelize: Sequelize) => {
 		allowNull: false,
     },
     password: {
-        type: DataTypes.STRING,
-        allowNull: false,
+		type: DataTypes.STRING,
+		allowNull: false,
 		validate: {
 			notEmpty: true,
-			// length :D
+			// length from min to max
 			len: [8, 128],
 		}
     },
@@ -71,7 +71,7 @@ export const initUserModel = (sequelize: Sequelize) => {
     role: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 'user'
+        defaultValue: 'USER'
     },
     deleted_at: {
 		type: DataTypes.DATE,

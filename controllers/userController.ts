@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { User } from '../src/models/User';
-import { CreateUserInterface } from '../src/interface/CreateUserInterface.ts';
+import { CreateUserInterface, UserParams } from '../src/interface/UserInterfaces.ts';
 
 export const createUser = async (req: Request<{}, {}, CreateUserInterface>, res: Response) => {
     const { firstName, middleName, lastName, username, email, birthday, phoneNumber, address } = req.body;
@@ -27,9 +27,6 @@ export const createUser = async (req: Request<{}, {}, CreateUserInterface>, res:
     }
 };
 
-interface UserParams {
-    id: string;
-}
 
 export const updateUserDetails = async (req: Request<UserParams, any, Partial<CreateUserInterface>>, res: Response) => {
     const { firstName, middleName, lastName, username,email, birthday, phoneNumber, address, role } = req.body;

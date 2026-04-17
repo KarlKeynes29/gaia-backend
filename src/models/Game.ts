@@ -41,10 +41,10 @@ export const initGameModel = (sequelize: Sequelize) => {
             defaultValue: false
         }
     }, {
-        sequelize,
-        tableName: 'games',
-        paranoid: true,
-        underscored: true,
+            sequelize,
+            tableName: 'games',
+            paranoid: true,
+            underscored: true,
     });
 };
 

@@ -1,38 +1,34 @@
-import { Table, Column, Model, DataType, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
-import { User, CartItem } from './index';
-
-// ** Note to self: **
-// When using sequelize-typescript with decorators, it's crucial to ensure that the TypeScript compiler options are set correctly to support experimental decorators and emit metadata. This allows Sequelize to properly interpret the model definitions and relationships. Make sure to include "experimentalDecorators": true and "emitDecoratorMetadata": true in your tsconfig.json file to avoid any issues with model recognition and association handling.
-
-@Table({
-    tableName: 'carts'
-})
+import { Model, Sequelize } from 'sequelize';
+import { CartItem, User } from './index';
+import { DataTypes } from 'sequelize';
 
 export class Cart extends Model {
-    @Column({
-        type: DataType.UUID,
-        defaultValue: DataType.UUIDV4,
-        primaryKey: true
-    })
     declare id: string;
+    declare user_id: string;
+    declare status: 'ACTIVE' | 'ABANDONED' | 'CHECKED_OUT';
+}
 
-    @ForeignKey(() => User)
-    @Column({
-        type: DataType.UUID,
-        allowNull: false
-    })
-    user_id!: string;
-
-    @Column({
-        type: DataType.ENUM('ACTIVE', 'ABANDONED', 'CHECKED_OUT'),
-        defaultValue: 'ACTIVE',
-        allowNull: false
-    })
-    status!: string;
-
-    @BelongsTo(() => User)
-    user!: User;
-
-    @HasMany(() => CartItem)
-    items!: CartItem[];
+export const initCartModel = (sequelize: Sequelize) => {
+    Cart.init({
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        user_id: {
+            type: DataTypes.UUID,
+            allowNull: false,
+        },
+        status: {
+            type: DataTypes.STRING,
+            defaultValue: null,
+        },
+    }, {
+            sequelize,
+            tableName: 'carts',
+            paranoid: true,
+            underscored: true,
+    }) 
+    Cart.hasMany(CartItem, { foreignKey: 'cart_id', as: 'items' });
+    Cart.belongsTo(User, { foreignKey: 'user_id' });
 }

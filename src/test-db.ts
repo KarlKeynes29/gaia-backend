@@ -1,4 +1,5 @@
-import { initializeDb, sequelize } from './database';
+import { sequelize } from './database';
+import { initializeDb } from './models';
 import { User, Game, Cart, CartItem } from './models';
 
 const seed = async () => {
