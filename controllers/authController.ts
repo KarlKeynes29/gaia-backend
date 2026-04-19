@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { User } from '../models';
+import { User } from '../src/models/index.ts';
 import { LoginInterface } from '../src/interface/AuthInterface';
 
 export const login = async (req: Request<{}, {}, LoginInterface>, res: Response) => {
@@ -38,7 +38,6 @@ export const login = async (req: Request<{}, {}, LoginInterface>, res: Response)
         });
         
     } catch (error) {
-
+        console.error('Error in logging the user in.', error);
     }
 }
-

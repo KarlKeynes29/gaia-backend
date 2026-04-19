@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { User } from '../src/models/User';
+import { User } from '../src/models/index.ts';
 import { CreateUserInterface, UserParams } from '../src/interface/UserInterfaces.ts';
 
 export const createUser = async (req: Request<{}, {}, CreateUserInterface>, res: Response) => {
