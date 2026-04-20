@@ -1,6 +1,7 @@
 import { UUID } from "node:crypto";
 
 export interface GameInterface {
+    id: UUID,
     title: string;
     description: string;
     price: number;
@@ -10,15 +11,6 @@ export interface GameInterface {
 
 export interface GameResponseInterface {
     message: string,
-    title: string,
-    price: number
-}
-
-export interface editGameInterface {
-    id: UUID,
-    title?: string | null;
-    description?: string | null;
-    price?: number | null;
-    is_available?: boolean;
-    is_featured?: boolean;
+    title?: string,
+    price?: number
 }

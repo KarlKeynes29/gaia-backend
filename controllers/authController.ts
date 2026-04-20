@@ -36,7 +36,7 @@ export const login = async (req: Request<{}, {}, LoginInterface>, res: Response)
             token,
             user: userDetailsWithoutPassword
         });
-        
+
     } catch (error) {
         console.error('Error in logging the user in.', error);
     }
