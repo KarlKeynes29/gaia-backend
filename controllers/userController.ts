@@ -1,38 +1,12 @@
 import { Request, Response } from 'express';
 import { User } from '../src/models/index.ts';
-import { CreateUserInterface, UserParams } from '../src/interface/UserInterfaces.ts';
+import { RegisterInterface, UserParams } from '../src/interface/UserInterfaces.ts';
 
-export const createUser = async (req: Request<{}, {}, CreateUserInterface>, res: Response) => {
-    const { firstName, middleName, lastName, username, email, birthday, phoneNumber, address } = req.body;
-
-    try { 
-        const user = await User.create({
-            first_name: firstName,
-            middle_name: middleName || null,
-            last_name: lastName,
-            username: username,
-            email: email,
-            birthday: birthday || null,
-            phone_number: phoneNumber || null,
-            address: address || null,
-        });
-
-        return res.status(201).json({
-            message: 'User created successfully!',
-            user: { id: user.id }
-        });
-    } catch (error) {
-        console.error('Error in creating user:', error);
-        return res.status(500).json({ message: 'Internal Server Error' });
-    }
-};
-
-
-export const updateUserDetails = async (req: Request<UserParams, any, Partial<CreateUserInterface>>, res: Response) => {
+export const updateUserDetails = async (req: Request<UserParams, any, Partial<RegisterInterface>>, res: Response) => {
     const { firstName, middleName, lastName, username,email, birthday, phoneNumber, address, role } = req.body;
 
     try {
-        const user = await User.findByPk(req.params.id);
+        const user = await User.findByPk(req.user.id);
 
         if (user) {
             await user.update({

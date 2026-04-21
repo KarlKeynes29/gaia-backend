@@ -1,4 +1,4 @@
-export interface CreateUserInterface {
+export interface RegisterInterface {
     username: string;
     password: string;
     firstName: string;

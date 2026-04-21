@@ -24,10 +24,10 @@ export const initCartModel = (sequelize: Sequelize) => {
             defaultValue: null,
         },
     }, {
-            sequelize,
-            tableName: 'carts',
-            paranoid: true,
-            underscored: true,
+        sequelize,
+        tableName: 'carts',
+        paranoid: true,
+        underscored: true,
     }) 
     Cart.hasMany(CartItem, { foreignKey: 'cart_id', as: 'items' });
     Cart.belongsTo(User, { foreignKey: 'user_id' });

@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { Game } from '../src/models/Game.ts';
 import { GameInterface, GameResponseInterface } from '../src/interface/GameInterface.ts';
-import { Identifier } from 'sequelize';
 
 export const addGame = async (req: Request<{}, {}, GameInterface>, res: Response<GameResponseInterface>) => {
     const { title, description, price, is_available, is_featured } = req.body;
@@ -15,7 +14,7 @@ export const addGame = async (req: Request<{}, {}, GameInterface>, res: Response
             is_featured: is_featured
         });
 
-        // console.log(game.title);
+        console.log(game.toJSON());
 
         return res.status(201).json({
             message: 'Game was added successfully!',

@@ -1,7 +1,5 @@
-import { UUID } from "node:crypto";
-
 export interface GameInterface {
-    id: UUID,
+    id: string,
     title: string;
     description: string;
     price: number;
