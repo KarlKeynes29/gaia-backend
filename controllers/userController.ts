@@ -4,9 +4,9 @@ import { RegisterInterface, UserParams } from '../src/interface/UserInterfaces.t
 
 export const updateUserDetails = async (req: Request<UserParams, any, Partial<RegisterInterface>>, res: Response) => {
     const { firstName, middleName, lastName, username,email, birthday, phoneNumber, address, role } = req.body;
-
+    const { id } = req.params;
     try {
-        const user = await User.findByPk(req.user.id);
+        const user = await User.findByPk(id);
 
         if (user) {
             await user.update({

@@ -53,10 +53,10 @@ export const addGame = async (req: Request<{}, {}, GameInterface>, res: Response
     }
 }
 
-export const editGameDetails = async (req: Request, res: Response) => {
-    const authReq = req as AuthRequest;
-    const { title, description, price, is_available, is_featured } = authReq.body;
-    const { id } = authReq.params;
+export const editGameDetails = async (req: Request<{ id: string }, {}, GameInterface>, res: Response) => {
+    // const authReq = req as AuthRequest;
+    const { title, description, price, is_available, is_featured } = req.body;
+    const { id } = req.params;
 
     try{
         const game = await Game.findByPk(id);

@@ -51,7 +51,8 @@
     "src/**/*",
     "controllers/**/*",
     "migrations/**/*",
-    "seeders/**/*"
+    "seeders/**/*",
+    "types.d.ts"
   ],
   "exclude": ["node_modules"]
 }

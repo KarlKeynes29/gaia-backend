@@ -13,12 +13,12 @@ export interface AuthRequest extends Request {
     }
 }
 
-export const verify = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const verify = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // My notes for study:
         // get the entire value of the headers.authorization
         const authHeader = req.headers.authorization;
-        // split so you get only the token and use it
+        // split it so you get only the token and use it
         const token = authHeader && authHeader.split(' ')[1];
 
         if (!token) {
@@ -26,10 +26,11 @@ export const verify = (req: AuthRequest, res: Response, next: NextFunction) => {
         }
 
         const secret = process.env.JWT_SECRET;
-        const decoded = jwt.verify(token, secret) as { id: string, role: string };
+        const decoded = jwt.verify(token, secret as string) as { id: string, role: string };
 
         req.user = decoded; 
-
+        // Note:
+        // next(); is here because this is a middleware and 
         next();
     } catch (error) {
         console.error('JWT Verification Error:', error);
