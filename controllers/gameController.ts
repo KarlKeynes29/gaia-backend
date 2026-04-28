@@ -2,13 +2,15 @@ import { Request, Response } from 'express';
 import { Game } from '../src/models/Game.ts';
 import { GameInterface, GameResponseInterface } from '../src/interface/GameInterface.ts';
 
+// Not needed anymore but I'll be commenting this out for reference.
+// Made a types.d.ts file to declare the Request model to include an extra user object.
 // Notes for study: We extend the base Request model from Express to make a custom interface with Auth/middleware object inside added to the body sent from the frontend.
-interface AuthRequest extends Request<{ id: string }, {}, GameInterface> {
-    user: {
-        id: string;
-        role: string;
-    };
-}
+// interface AuthRequest extends Request<{ id: string }, {}, GameInterface> {
+//     user: {
+//         id: string;
+//         role: string;
+//     };
+// }
 
 export const getAllGames = async (req: Request, res: Response) => {
     try {
