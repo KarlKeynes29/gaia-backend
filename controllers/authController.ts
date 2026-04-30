@@ -28,9 +28,8 @@ export const verify = async (req: Request, res: Response, next: NextFunction) =>
         const secret = process.env.JWT_SECRET;
         const decoded = jwt.verify(token, secret as string) as { id: string, role: string };
 
-        req.user = decoded; 
-        // Note:
-        // next(); is here because this is a middleware and 
+        req.user = decoded;
+
         next();
     } catch (error) {
         console.error('JWT Verification Error:', error);
@@ -41,7 +40,7 @@ export const verify = async (req: Request, res: Response, next: NextFunction) =>
 export const register = async (req: Request<{}, {}, RegisterInterface>, res: Response) => {
     const { firstName, middleName, lastName, username, email, birthday, phoneNumber, address } = req.body;
 
-    try { 
+    try {
         const user = await User.create({
             first_name: firstName,
             middle_name: middleName || null,
@@ -70,14 +69,14 @@ export const login = async (req: Request<{}, {}, LoginInterface>, res: Response)
         const user = await User.scope('withPassword').findOne({
             where: {
                 [Op.or]: [
-                    { 
+                    {
                         email: loginValue,
                         username: loginValue
                     }
                 ]
             }
         });
-        // Study note: the second condition only happens if the first one is falsy, meaning, 
+        // Study note: the second condition only happens if the first one is falsy, meaning,
         if (!user || !(await user.validatePassword(password))) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }

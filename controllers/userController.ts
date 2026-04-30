@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { User } from '../src/models/index.ts';
 import { RegisterInterface, UserParams } from '../src/interface/UserInterfaces.ts';
 
-export const updateUserDetails = async (req: Request<UserParams, any, Partial<RegisterInterface>>, res: Response) => {
+export const updateUserDetails = async (req: Request<{ id: string }, any, Partial<RegisterInterface>>, res: Response) => {
     const { firstName, middleName, lastName, username,email, birthday, phoneNumber, address, role } = req.body;
     const { id } = req.params;
     try {
@@ -30,11 +30,11 @@ export const updateUserDetails = async (req: Request<UserParams, any, Partial<Re
         }
     } catch (error) {
         console.error('Error in updating user details:', error);
-        return res.status(500).json({ message: 'Internal Server Error' });  
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
 }
 
-export const deleteUser = async (req: Request<UserParams>, res: Response) => {
+export const deleteUser = async (req: Request<{ id: string }>, res: Response) => {
     const userId = req.params.id
     try {
         const user = await User.findByPk(userId);

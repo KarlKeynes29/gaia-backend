@@ -10,7 +10,3 @@ export interface RegisterInterface {
     address?: string;
     role: string;
 }
-
-export interface UserParams {
-    id: string;
-}
