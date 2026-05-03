@@ -17,7 +17,7 @@ export const getAllGames = async (req: Request, res: Response) => {
         const games = await Game.findAll();
 
         if (games.length === 0) {
-            return res.status(404).json('No games found...');
+            return res.status(404).json({ message: 'No games found...' });
         }
 
         res.status(200).json({

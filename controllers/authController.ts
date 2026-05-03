@@ -37,6 +37,12 @@ export const verify = async (req: Request, res: Response, next: NextFunction) =>
     }
 }
 
+// export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+// 	if (req?.user?.role !== 'ADMIN') {
+// 		res.status()
+// 	}
+// };
+
 export const register = async (req: Request<{}, {}, RegisterInterface>, res: Response) => {
     const { firstName, middleName, lastName, username, email, birthday, phoneNumber, address } = req.body;
 

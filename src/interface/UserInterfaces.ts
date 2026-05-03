@@ -10,3 +10,7 @@ export interface RegisterInterface {
     address?: string;
     role: string;
 }
+
+export interface changePasswordInterface {
+	password: string;
+}

@@ -21,14 +21,14 @@ export class User extends Model {
 	}
 
 	public generateToken(): string {
-		const secret = process.env.JWT_SECRET;
+		const secret: string = process.env.JWT_SECRET || 'fallbacksecret291996';
 		return jwt.sign(
 			{
 				id: this.id,
 				role: this.role
 			},
 			secret,
-			{ expireIn: '1d'}
+			{ expiresIn: '1d' }
 		);	
 	}
 }
