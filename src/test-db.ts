@@ -48,7 +48,7 @@ const seed = async () => {
             }]
         });
 
-        console.log('Cart Items found:', fullCart?.items?.length);
+        console.log('Cart Items found:', fullCart);
         console.log('First Item in Cart is:', fullCart?.items[0]?.game.title);
 
     } catch (error) {

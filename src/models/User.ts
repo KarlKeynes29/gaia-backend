@@ -22,6 +22,11 @@ export class User extends Model {
 
 	public generateToken(): string {
 		const secret: string = process.env.JWT_SECRET || 'fallbacksecret291996';
+		
+		if (!secret) {
+			throw new Error('JTW_SECRET is not defined in environment variables.');
+		}
+		
 		return jwt.sign(
 			{
 				id: this.id,

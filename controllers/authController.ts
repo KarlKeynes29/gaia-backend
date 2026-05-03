@@ -25,7 +25,12 @@ export const verify = async (req: Request, res: Response, next: NextFunction) =>
             return res.status(401).json({ message: 'Access Denied. No token provided.' });
         }
 
-        const secret = process.env.JWT_SECRET;
+		const secret = process.env.JWT_SECRET;
+		
+		if (!secret) {
+    		return res.status(500).json({ message: "Server configuration error: Secret missing." });
+		}
+		
         const decoded = jwt.verify(token, secret as string) as { id: string, role: string };
 
         req.user = decoded;
@@ -37,11 +42,12 @@ export const verify = async (req: Request, res: Response, next: NextFunction) =>
     }
 }
 
-// export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-// 	if (req?.user?.role !== 'ADMIN') {
-// 		res.status()
-// 	}
-// };
+export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+	if (req?.user?.role !== 'ADMIN') {
+		return res.status(401).json({ message: 'Account does not have admin privilege!' });
+	}
+	next();
+};
 
 export const register = async (req: Request<{}, {}, RegisterInterface>, res: Response) => {
     const { firstName, middleName, lastName, username, email, birthday, phoneNumber, address } = req.body;
