@@ -1,14 +1,13 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
 import { User } from '../src/models/index.ts';
 import { RegisterInterface, changePasswordInterface } from '../src/interface/UserInterfaces.ts';
 
 export const getUserDetails = async (req: Request<{ id: string }>, res: Response) => {
 	const { id } = req.params;
-	
+
 	try {
 		const user = await User.findByPk(id);
-		
+
 		if (!user) {
 			return res.status(404).json({ message: 'User not found while fetching.' });
 		}
@@ -30,14 +29,11 @@ export const changePassword = async (req: Request<{ id: string }, {}, changePass
 		if (!user) {
 			return res.status(404).json({ message: 'User not found!' });
 		}
-		//Notes:
-		// Dictate salt, hash the password, and then update 
-		const salt = await bcrypt.genSalt(10);
-		const hashedPassword = await bcrypt.hash(password, salt);
-		await user.update({ hashedPassword });
+
+		await user.update({ password });
 
 		return res.status(200).json({ message: 'Password was successfully updated!' });
-		
+
 	} catch (error) {
 		console.error('Error in changing password for user:', error);
 		return res.status(500).json({ message: 'Internal Server Error' });
@@ -53,7 +49,7 @@ export const updateUserDetails = async (req: Request<{ id: string }, any, Partia
 		if (!user) {
 			return res.status(404).json({ message: 'User not found!' });
 		}
-		
+
         await user.update({
             first_name: firstName,
             middle_name: middleName,
@@ -65,11 +61,11 @@ export const updateUserDetails = async (req: Request<{ id: string }, any, Partia
             address: address,
 			role: role
 		});
-        
+
         return res.json({
             message: 'User details updated successfully!',
 		});
-		
+
     } catch (error) {
         console.error('Error in updating user details:', error);
         return res.status(500).json({ message: 'Internal Server Error' });

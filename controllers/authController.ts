@@ -14,6 +14,7 @@ export interface AuthRequest extends Request {
 }
 
 export const verify = async (req: Request, res: Response, next: NextFunction) => {
+    const secret = process.env.JWT_SECRET;
     try {
         // My notes for study:
         // get the entire value of the headers.authorization
@@ -25,12 +26,10 @@ export const verify = async (req: Request, res: Response, next: NextFunction) =>
             return res.status(401).json({ message: 'Access Denied. No token provided.' });
         }
 
-		const secret = process.env.JWT_SECRET;
-		
 		if (!secret) {
     		return res.status(500).json({ message: "Server configuration error: Secret missing." });
 		}
-		
+
         const decoded = jwt.verify(token, secret as string) as { id: string, role: string };
 
         req.user = decoded;
@@ -42,11 +41,16 @@ export const verify = async (req: Request, res: Response, next: NextFunction) =>
     }
 }
 
-export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-	if (req?.user?.role !== 'ADMIN') {
-		return res.status(401).json({ message: 'Account does not have admin privilege!' });
-	}
-	next();
+export const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.user || req.user?.role.toUpperCase() !== 'ADMIN') {
+    	   return res.status(403).json({ message: 'Account does not have admin privilege!' });
+        }
+        next();
+    } catch (error) {
+        console.error('User does not have admin privileges.', error);
+        next(error);
+    }
 };
 
 export const register = async (req: Request<{}, {}, RegisterInterface>, res: Response) => {
@@ -77,14 +81,12 @@ export const register = async (req: Request<{}, {}, RegisterInterface>, res: Res
 export const login = async (req: Request<{}, {}, LoginInterface>, res: Response) => {
     try {
         const { loginValue, password } = req.body;
-        // I use scope() due to the scope object added to the User model relating to passwords.
+        // I use scope() due to the scope object added to the User model relating to passwords--it's needed.
         const user = await User.scope('withPassword').findOne({
             where: {
                 [Op.or]: [
-                    {
-                        email: loginValue,
-                        username: loginValue
-                    }
+                    { email: loginValue },
+                    { username: loginValue }
                 ]
             }
         });
@@ -94,11 +96,14 @@ export const login = async (req: Request<{}, {}, LoginInterface>, res: Response)
         }
 
         const token = user.generateToken();
+        const userRole = user.role;
+        const prettyRole = userRole.charAt(0) + userRole.slice(1).toLocaleLowerCase();
 
         return res.status(200).json({
-            message: 'Login successful!',
+            message: `Login successful, welcome ${prettyRole}!`,
             token,
-            user: user.id
+            user: user.id,
+            role: userRole
         });
     } catch (error) {
         console.error('Error in logging the user in.', error);

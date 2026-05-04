@@ -6,7 +6,7 @@ const router = Router();
 
 router.get('/', gameController.getAllGames);
 router.post('/add', verify, isAdmin, gameController.addGame);
-router.put('/:id', verify, isAdmin, gameController.editGameDetails);
+router.patch('/:id', verify, isAdmin, gameController.editGameDetails);
 router.delete('/:id', verify, isAdmin, gameController.deleteGame);
 
 export default router;

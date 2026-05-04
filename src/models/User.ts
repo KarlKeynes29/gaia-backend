@@ -21,12 +21,12 @@ export class User extends Model {
 	}
 
 	public generateToken(): string {
-		const secret: string = process.env.JWT_SECRET || 'fallbacksecret291996';
-		
+		const secret: string = process.env.JWT_SECRET || 'gaia291996k3yn3s';
+
 		if (!secret) {
 			throw new Error('JTW_SECRET is not defined in environment variables.');
 		}
-		
+
 		return jwt.sign(
 			{
 				id: this.id,
@@ -34,7 +34,7 @@ export class User extends Model {
 			},
 			secret,
 			{ expiresIn: '1d' }
-		);	
+		);
 	}
 }
 
@@ -108,18 +108,14 @@ export const initUserModel = (sequelize: Sequelize) => {
 			user.password = await bcrypt.hash(user.password, 10);
 		},
 		beforeUpdate: async (user: User) => {
-			if (user.changed('password')) {
+            if (user.changed('password')) {
+                console.log('[Password hook triggered]');
 				user.password = await bcrypt.hash(user.password, 10);
 			}
 		},
-		beforeValidate: async (user: User) => {
-			if (user.password) {
-
-			}
-		}
 	},
 	paranoid: true,
-	underscored: true, 
+	underscored: true,
 	defaultScope: {
 		attributes: { exclude: ['password'] }
 	},
