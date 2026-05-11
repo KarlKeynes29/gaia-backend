@@ -1,10 +1,13 @@
 // Note to import from sequelize-typescript instead of sequelize to avoid type errors when you're using TS.
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import { DataType } from 'sequelize-typescript';
 
 export class Game extends Model {
     declare id: string;
     declare title: string;
     declare description: string;
+    declare genre: string;
+    declare image: string;
     declare price: number;
     declare is_available: boolean;
     declare is_featured: boolean;
@@ -27,6 +30,16 @@ export const initGameModel = (sequelize: Sequelize) => {
             defaultValue: null,
             allowNull: false,
         },
+        genre: {
+            type: DataTypes.STRING,
+            defaultValue: null,
+            allowNull: false
+        },
+        image: {
+            type: DataType.STRING,
+            defaultValue: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&h=600',
+            allowNull: false
+        },
         price: {
             type: DataTypes.NUMBER,
             defaultValue: null,
@@ -47,5 +60,3 @@ export const initGameModel = (sequelize: Sequelize) => {
             underscored: true,
     });
 };
-
-
