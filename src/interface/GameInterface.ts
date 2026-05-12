@@ -12,7 +12,8 @@ export interface filterGameInterface {
     genre?: string;
     is_featured?: boolean;
     is_available?: boolean;
-    price?: string;
+    priceFrom?: string;
+    priceTo?: string;
 }
 
 export interface GameResponseInterface {

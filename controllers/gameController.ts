@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';s
+import { Op } from 'sequelize';
 import { Request, Response } from 'express';
 import { Game } from '../src/models/Game.ts';
 import { GameInterface, filterGameInterface, GameResponseInterface } from '../src/interface/GameInterface.ts';
@@ -35,29 +35,30 @@ export const filterGame = async (req: Request<{}, {}, filterGameInterface>, res:
     const { genre, is_featured, is_available, priceFrom, priceTo } = req.query;
     const whereClause: any = {};
     try {
+        if (genre) whereClause.genre = genre;
+        if (is_featured !== undefined) whereClause.is_featured = is_featured === 'true';
+        if (is_available !== undefined) whereClause.is_available = is_available === 'true';
+
+        if (priceFrom || priceTo) {
+            whereClause.price = {};
+            if (priceFrom) whereClause.price[Op.gte] = Number(priceFrom);
+            if (priceTo) whereClause.price[Op.lte] = Number(priceTo);
+        }
+
+         const games = await Game.findAll({
+             where: whereClause
+         });
+
+         if (games.length === 0) {
+             return res.status(404).json({ message: 'No games found.' });
+         }
+
 
     } catch (error) {
         console.error('Error while filtering!', error);
         res.status(500).json('Interal server error while filtering.');
     }
 
-    if (genre) whereClause.genre = genre;
-    if (is_featured !== undefined) whereClause.is_featured = is_featured === 'true';
-    if (is_available !== undefined) whereClause.is_available = is_available === 'true';
-    if (priceFrom || priceTo) {
-        whereClause.price = {};
-        if (priceFrom) whereClause.price[Op.gte] = Number(priceFrom);
-        if (priceTo) whereClause.price[Op.lte] = Number(priceTo);
-    }
-
-    const games = await Game.findAll({
-       where: whereClause
-    });
-
-    if (games.length === 0) {
-        return res.status(404).json({ message: 'No games found.' });
-    }
-    
     // simplified
     // try {
     //     const games = await Game.findAll({
