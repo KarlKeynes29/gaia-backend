@@ -31,32 +31,48 @@ export const getAllGames = async (req: Request, res: Response) => {
     }
 }
 
-export const filterGame = async (req: Request<{}, {}, filterGameInterface>, res: Response) => {
-    const { genre, is_featured, is_available, priceFrom, priceTo } = req.query;
+export const filterGame = async (req: Request<{}, {}, {}, filterGameInterface>, res: Response) => {
+    const { searchValue, genre, is_featured, is_available, priceFrom, priceTo } = req.query;
     const whereClause: any = {};
     try {
-        if (genre) whereClause.genre = genre;
-        if (is_featured !== undefined) whereClause.is_featured = is_featured === 'true';
-        if (is_available !== undefined) whereClause.is_available = is_available === 'true';
+        if (searchValue) {
+            const searchPattern = `%${searchValue}%`;
 
+            whereClause[Op.or] = [
+                {
+                    title: { [Op.iLike]: searchPattern },
+                    description: { [Op.iLike]: searchPattern },
+                    genre: { [Op.iLike]: searchPattern }
+                }
+            ]
+            whereClause.title = { [Op.or]: searchValue }
+            whereClause.description = { [Op.iLike]: searchValue }
+            whereClause.genre = { [Op.iLike]: searchValue }
+        };
+        if (genre) whereClause.genre = { [Op.in]: String(genre).split(',') }
+        if (is_featured !== undefined) whereClause.is_featured = is_featured === true;
+        if (is_available !== undefined) whereClause.is_available = is_available === true;
         if (priceFrom || priceTo) {
             whereClause.price = {};
             if (priceFrom) whereClause.price[Op.gte] = Number(priceFrom);
             if (priceTo) whereClause.price[Op.lte] = Number(priceTo);
         }
 
-         const games = await Game.findAll({
+        const games = await Game.findAll({
              where: whereClause
-         });
+        });
 
-         if (games.length === 0) {
-             return res.status(404).json({ message: 'No games found.' });
-         }
+        if (games.length === 0) {
+            return res.status(404).json({ message: 'No games found.' });
+        }
 
-
+        return res.status(200).json({
+            message: 'Filtering successful!',
+            games: games
+        });
     } catch (error) {
         console.error('Error while filtering!', error);
-        res.status(500).json('Interal server error while filtering.');
+        res.status(500).json({ message: 'Internal server error while filtering.' });
     }
 
     // simplified
@@ -99,7 +115,7 @@ export const addGame = async (req: Request<{}, {}, GameInterface>, res: Response
         });
     } catch (error) {
         console.error('Error in adding the game!', error);
-        return res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Internal server error while adding.' });
     }
 }
 
@@ -127,7 +143,7 @@ export const editGameDetails = async (req: Request<{ id: string }, {}, GameInter
         res.status(200).json({ message: 'Game succesfully updated!' });
     } catch (error) {
         console.error("Error in updated game details!", error);
-        return res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Internal server error whle editing.' });
     }
 }
 // soft-delete hehe
@@ -144,6 +160,6 @@ export const deleteGame = async (req: Request<{ id: string }>, res: Response) =>
         return res.status(200).json({ message: 'Successfully deleted the game!' });
     } catch (error) {
         console.error("Error in deleting game...", error);
-        return res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Interna server error while deleting.' });
     }
 }

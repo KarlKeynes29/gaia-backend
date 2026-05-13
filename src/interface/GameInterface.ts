@@ -9,6 +9,7 @@ export interface GameInterface {
 }
 
 export interface filterGameInterface {
+    searchValue?: string;
     genre?: string;
     is_featured?: boolean;
     is_available?: boolean;
