@@ -32,22 +32,20 @@ export const getAllGames = async (req: Request, res: Response) => {
 }
 
 export const filterGame = async (req: Request<{}, {}, {}, filterGameInterface>, res: Response) => {
-    const { searchValue, genre, is_featured, is_available, priceFrom, priceTo } = req.query;
+    const { searchValue, genre, is_featured, is_available, priceFrom, priceTo, page, limit, sortBy } = req.query;
+    // interface whereClauseInterface {
+    //     title
+    // }
+
     const whereClause: any = {};
     try {
         if (searchValue) {
             const searchPattern = `%${searchValue}%`;
-
             whereClause[Op.or] = [
-                {
-                    title: { [Op.iLike]: searchPattern },
-                    description: { [Op.iLike]: searchPattern },
-                    genre: { [Op.iLike]: searchPattern }
-                }
+                { title: { [Op.iLike]: searchPattern } },
+                { description: { [Op.iLike]: searchPattern }},
+                { genre: { [Op.iLike]: searchPattern } }
             ]
-            whereClause.title = { [Op.or]: searchValue }
-            whereClause.description = { [Op.iLike]: searchValue }
-            whereClause.genre = { [Op.iLike]: searchValue }
         };
         if (genre) whereClause.genre = { [Op.in]: String(genre).split(',') }
         if (is_featured !== undefined) whereClause.is_featured = is_featured === true;
@@ -58,38 +56,36 @@ export const filterGame = async (req: Request<{}, {}, {}, filterGameInterface>, 
             if (priceTo) whereClause.price[Op.lte] = Number(priceTo);
         }
 
-        const games = await Game.findAll({
-             where: whereClause
+        const pageSize = Number(limit) || 12;
+        const pageNumber = Number(page) || 1;
+        const offset = (pageNumber - 1) * pageSize;
+
+        let orderClause: any = [['createdAt', 'DESC']];
+        if (sortBy === 'price_asc') orderClause = [['price', 'ASC']];
+        if (sortBy === 'price_desc') orderClause = [['price', 'DESC']];
+
+        const { rows, count } = await Game.findAndCountAll({
+            where: whereClause,
+            limit: pageSize,
+            offset: offset,
+            order: orderClause,
         });
 
-        if (games.length === 0) {
+        if (rows.length === 0) {
             return res.status(404).json({ message: 'No games found.' });
         }
 
         return res.status(200).json({
-            message: 'Filtering successful!',
-            games: games
+            message: 'Games found successfully!',
+            totalItems: count,
+            totalPages: Math.ceil(count / pageSize),
+            currentPage: pageNumber,
+            games: rows
         });
     } catch (error) {
         console.error('Error while filtering!', error);
         res.status(500).json({ message: 'Internal server error while filtering.' });
     }
-
-    // simplified
-    // try {
-    //     const games = await Game.findAll({
-    //         where: genre ? { genre } : {}
-    //     });
-
-    //     if (!games) {
-    //         res.status(404).json({ message: 'Game not found.' });
-    //     }
-
-    //     return res.status(200).json({ messsage: `Successfully filtered by genre: ${genre}` });
-    // } catch (error) {
-    //     console.error("Error in filtering by genre!", error);
-    //     res.status(500).json({ message: 'Internal server error while filtering.' });
-    // }
 }
 
 export const addGame = async (req: Request<{}, {}, GameInterface>, res: Response<GameResponseInterface>) => {

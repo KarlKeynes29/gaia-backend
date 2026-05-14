@@ -15,6 +15,9 @@ export interface filterGameInterface {
     is_available?: boolean;
     priceFrom?: string;
     priceTo?: string;
+    page?: string;
+    limit?: string
+    sortBy?: string;
 }
 
 export interface GameResponseInterface {

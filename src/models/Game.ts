@@ -1,4 +1,3 @@
-// Note to import from sequelize-typescript instead of sequelize to avoid type errors when you're using TS.
 import { Model, DataTypes, Sequelize } from 'sequelize';
 import { DataType } from 'sequelize-typescript';
 
