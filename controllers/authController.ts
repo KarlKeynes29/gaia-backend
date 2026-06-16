@@ -6,12 +6,13 @@ import { User } from '../src/models/index.ts';
 import { LoginInterface } from '../src/interface/AuthInterface';
 import { RegisterInterface } from '../src/interface/UserInterfaces.ts';
 
-export interface AuthRequest extends Request {
-    user?: {
-        id: string;
-        role: string;
-    }
-}
+// Study note: This is not used anymore because I made the 'user'
+// export interface AuthRequest extends Request {
+//     user?: {
+//         id: string;
+//         role: string;
+//     }
+// }
 
 export const verify = async (req: Request, res: Response, next: NextFunction) => {
     const secret = process.env.JWT_SECRET;
@@ -80,13 +81,13 @@ export const register = async (req: Request<{}, {}, RegisterInterface>, res: Res
 
 export const login = async (req: Request<{}, {}, LoginInterface>, res: Response) => {
     try {
-        const { loginValue, password } = req.body;
+        const { loginDetails, password } = req.body;
         // I use scope() due to the scope object added to the User model relating to passwords--it's needed.
         const user = await User.scope('withPassword').findOne({
             where: {
                 [Op.or]: [
-                    { email: loginValue },
-                    { username: loginValue }
+                    { email: loginDetails },
+                    { username: loginDetails }
                 ]
             }
         });
@@ -102,8 +103,11 @@ export const login = async (req: Request<{}, {}, LoginInterface>, res: Response)
         return res.status(200).json({
             message: `Login successful, welcome ${prettyRole}!`,
             token,
-            user: user.id,
-            role: userRole
+            user: {
+                id: user.id,
+                email: user.email,
+                role: userRole
+            },
         });
     } catch (error) {
         console.error('Error in logging the user in.', error);

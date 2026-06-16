@@ -40,8 +40,7 @@ export const initGameModel = (sequelize: Sequelize) => {
             allowNull: false
         },
         price: {
-            type: DataTypes.NUMBER,
-            defaultValue: null,
+            type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
         },
         is_available: {

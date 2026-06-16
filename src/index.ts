@@ -1,5 +1,7 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express, { Request, Response } from 'express';
-import { initializeDb } from './database';
+import { initializeDb } from './models/index';
 
 const app = express();
 const PORT = 3000;

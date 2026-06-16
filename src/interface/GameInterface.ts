@@ -11,8 +11,8 @@ export interface GameInterface {
 export interface filterGameInterface {
     searchValue?: string;
     genre?: string;
-    is_featured?: boolean;
-    is_available?: boolean;
+    is_featured?: string;
+    is_available?: string;
     priceFrom?: string;
     priceTo?: string;
     page?: string;

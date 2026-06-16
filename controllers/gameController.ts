@@ -33,10 +33,6 @@ export const getAllGames = async (req: Request, res: Response) => {
 
 export const filterGame = async (req: Request<{}, {}, {}, filterGameInterface>, res: Response) => {
     const { searchValue, genre, is_featured, is_available, priceFrom, priceTo, page, limit, sortBy } = req.query;
-    // interface whereClauseInterface {
-    //     title
-    // }
-
     const whereClause: any = {};
     try {
         if (searchValue) {
@@ -48,8 +44,8 @@ export const filterGame = async (req: Request<{}, {}, {}, filterGameInterface>, 
             ]
         };
         if (genre) whereClause.genre = { [Op.in]: String(genre).split(',') }
-        if (is_featured !== undefined) whereClause.is_featured = is_featured === true;
-        if (is_available !== undefined) whereClause.is_available = is_available === true;
+        if (is_featured !== undefined) whereClause.is_featured = is_featured === 'true';
+        if (is_available !== undefined) whereClause.is_available = is_available === 'true';
         if (priceFrom || priceTo) {
             whereClause.price = {};
             if (priceFrom) whereClause.price[Op.gte] = Number(priceFrom);
@@ -102,7 +98,7 @@ export const addGame = async (req: Request<{}, {}, GameInterface>, res: Response
             is_featured: is_featured
         });
 
-        // console.log(game.toJSON());
+        // console.log(game.toJSr());
 
         return res.status(201).json({
             message: 'Game was added successfully!',

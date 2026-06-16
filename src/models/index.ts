@@ -9,14 +9,11 @@ initGameModel(sequelize);
 initCartModel(sequelize);
 initCartItemModel(sequelize);
 
-// User to Cart
-User.hasOne(Cart, { foreignKey: 'user_id'});
+User.hasOne(Cart, { foreignKey: 'user_id' });
 Cart.belongsTo(User, { foreignKey: 'user_id' });
 
-// Cart to CartItem
 Cart.hasMany(CartItem, { as: 'items' });
 
-//Child to Parent
 CartItem.hasMany(Game, { foreignKey: 'game_id' });
 CartItem.belongsTo(Game);
 
@@ -30,10 +27,11 @@ export const initializeDb = async () => {
         await sequelize.authenticate();
         console.log('Database connection has been established!');
         // For dev onlyyyyyyyyyyyyyyyyyyy
-        // alter: true <- changes but thinks about constrainst of the table
+        // alter: true
         await sequelize.sync({ force: true });
         console.log("All models have been syncronized successfully.");
     } catch (error) {
+
         console.error('Unable to connect to the database:', error);
     }
 };

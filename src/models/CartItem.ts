@@ -29,11 +29,10 @@ export const initCartItemModel = (sequelize: Sequelize) => {
             allowNull: true,
         },
     }, {
-            sequelize,
-            tableName: 'cart_items',
-            paranoid: true,
-            underscored: true,
-        }
+        sequelize,
+        tableName: 'cart_items',
+        paranoid: true,
+        underscored: true,
+    }
     )
-    Game.belongsTo(CartItem);
-}
+};
