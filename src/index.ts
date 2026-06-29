@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express, { Request, Response } from 'express';
 import { initializeDb } from './models/index';
-import { authRouter } from '../routers/authRouter';
+import authRouter from '../routers/authRouter';
 
 const app = express();
 const PORT = 3000;
