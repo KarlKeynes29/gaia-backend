@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { User } from '../src/models/index.ts';
-import { RegisterInterface, changePasswordInterface } from '../src/interface/UserInterfaces.ts';
+import { User } from '../models/index.ts';
+import { RegisterInterface, changePasswordInterface } from '../interface/UserInterfaces.ts';
 
 export const getUserDetails = async (req: Request<{ id: string }>, res: Response) => {
 	const { id } = req.params;

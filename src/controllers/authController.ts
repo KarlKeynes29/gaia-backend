@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import { Op } from 'sequelize';
 import jwt from 'jsonwebtoken';
 
-import { User } from '../src/models/index.ts';
-import { LoginInterface } from '../src/interface/AuthInterface';
-import { RegisterInterface } from '../src/interface/UserInterfaces.ts';
+import { User } from '../models/User.ts';
+import { LoginInterface } from '../interface/AuthInterface.ts';
+import { RegisterInterface } from '../interface/UserInterfaces.ts';
 
 // Study note: This is not used anymore because I made the 'user'
 // export interface AuthRequest extends Request {
@@ -55,16 +55,22 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction) =
 };
 
 export const register = async (req: Request<{}, {}, RegisterInterface>, res: Response) => {
-    const { firstName, middleName, lastName, username, email, birthday, phoneNumber, address } = req.body;
+    const { username, password, firstName, middleName, lastName, email, birthday, phoneNumber, address } = req.body;
 
     try {
+        let formattedBirthday: Date | null = null;
+        if (birthday && birthday.trim() != '') {
+            formattedBirthday = new Date(`${birthday.trim()}T00:00:00.000Z`);
+        }
+
         const user = await User.create({
             first_name: firstName,
             middle_name: middleName || null,
             last_name: lastName,
             username: username,
+            password: password || null,
             email: email,
-            birthday: birthday || null,
+            birthday: formattedBirthday,
             phone_number: phoneNumber || null,
             address: address || null,
         });
@@ -81,13 +87,13 @@ export const register = async (req: Request<{}, {}, RegisterInterface>, res: Res
 
 export const login = async (req: Request<{}, {}, LoginInterface>, res: Response) => {
     try {
-        const { loginDetails, password } = req.body;
+        const { identity, password } = req.body;
         // I use scope() due to the scope object added to the User model relating to passwords--it's needed.
         const user = await User.scope('withPassword').findOne({
             where: {
                 [Op.or]: [
-                    { email: loginDetails },
-                    { username: loginDetails }
+                    { email: identity },
+                    { username: identity }
                 ]
             }
         });

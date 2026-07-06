@@ -1,12 +1,15 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import express, { Request, Response } from 'express';
-import { initializeDb } from './models/index';
-import authRouter from '../routers/authRouter';
+import cors from 'cors';
+
+import { initializeDb } from './models';
+import authRouter from './routers/authRouter';
 
 const app = express();
 const PORT = 3000;
 
+app.use(cors());
 app.use(express.json());
 
 app.use('/', authRouter);

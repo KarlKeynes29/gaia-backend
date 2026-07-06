@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import { Request, Response } from 'express';
-import { Game } from '../src/models/Game.ts';
-import { GameInterface, filterGameInterface, GameResponseInterface } from '../src/interface/GameInterface.ts';
+import { Game } from '../models/Game.ts';
+import { GameInterface, filterGameInterface, GameResponseInterface } from '../interface/GameInterface.ts';
 
 // Not needed anymore but I'll be commenting this out for reference.
 // Made a types.d.ts file to declare the Request model to include an extra user object.

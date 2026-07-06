@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import { Sequelize } from 'sequelize-typescript';
 
-// Database details
 export const sequelize = new Sequelize({
     dialect: 'postgres',
     logging: false,

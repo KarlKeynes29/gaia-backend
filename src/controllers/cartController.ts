@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { Cart } from '../src/models/Cart';
-import { CartItem } from '../src/models/CartItem';
+import { Cart } from '../models/Cart';
+import { CartItem } from '../models/CartItem';
 
 export const getCart = async (req: Request, res: Response) => {
     try {
