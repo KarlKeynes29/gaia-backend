@@ -87,6 +87,11 @@ export const deleteUser = async (req: Request<{ id: string }>, res: Response) =>
 }
 
 export const forgotPassword = async (req: Request<{}, {}, { email: string }>, res: Response) => {
-    const { email } = req.body;
+	const { email } = req.body;
 
+	try {
+		
+	} catch (error) {
+		
+	}
 }
