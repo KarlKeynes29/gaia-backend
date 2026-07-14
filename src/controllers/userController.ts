@@ -88,5 +88,9 @@ export const deleteUser = async (req: Request<{ id: string }>, res: Response) =>
 
 export const forgotPassword = async (req: Request<{}, {}, { email: string }>, res: Response) => {
     const { email } = req.body;
-
+    try {
+        const result = await User.findOne({ where: { email: email } });
+    } catch (error) {
+        console.error('Error while');
+    }
 }
