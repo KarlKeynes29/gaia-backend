@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { User } from '../models/index.ts';
 import { RegisterInterface, changePasswordInterface } from '../interface/UserInterfaces.ts';
+import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 
 export const getUserDetails = async (req: Request<{ id: string }>, res: Response) => {
 	const { id } = req.params;
@@ -88,10 +90,25 @@ export const deleteUser = async (req: Request<{ id: string }>, res: Response) =>
 
 export const forgotPassword = async (req: Request<{}, {}, { email: string }>, res: Response) => {
 	const { email } = req.body;
-
+	
+	if (!email) {
+		return res.status(400).json({ message: 'Email needed for verification!' });
+	}
+	
 	try {
+		const verifiedEmail = User.findOne({ where: { email: email } });
+		if (!verifiedEmail) {
+			return res.status(404).json({ message: 'No matching email was found.' });
+		}
+
+		const resetToken = crypto.randomBytes(32).toString('hex');
+		const tokenExpiration = new Date();
+		tokenExpiration.setHours(tokenExpiration.getHours() + 1);
 		
+		// Need to create a new column for the reset password token column in the database
+		// user.reset 
 	} catch (error) {
-		
+	 	console.error('Error in changing password for the account.', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
 	}
 }
