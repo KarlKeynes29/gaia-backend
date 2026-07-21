@@ -15,7 +15,8 @@ export class User extends Model {
 	declare address: string | null;
 	declare role: 'USER' | 'ADMIN';
 	declare deleted_at: Date | null;
-	declare reset_password_token: string | null;
+    declare reset_password_token: string | null;
+    declare reset_password_expires: string | null;
 
 	public async validatePassword(password: string): Promise<boolean> {
 		return await bcrypt.compare(password, this.password);
@@ -98,6 +99,11 @@ export const initUserModel = (sequelize: Sequelize) => {
 		defaultValue: 'USER'
 	  },
 	reset_password_token: {
+		type: DataTypes.STRING,
+		allowNull: true,
+		defaultValue: null
+      },
+    reset_password_expires: {
 		type: DataTypes.STRING,
 		allowNull: true,
 		defaultValue: null

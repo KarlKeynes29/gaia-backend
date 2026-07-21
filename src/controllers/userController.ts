@@ -3,6 +3,7 @@ import { User } from '../models/index.ts';
 import { RegisterInterface, changePasswordInterface } from '../interface/UserInterfaces.ts';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
+import nodemailer from 'nodemailer';
 
 export const getUserDetails = async (req: Request<{ id: string }>, res: Response) => {
 	const { id } = req.params;
@@ -90,23 +91,55 @@ export const deleteUser = async (req: Request<{ id: string }>, res: Response) =>
 
 export const forgotPassword = async (req: Request<{}, {}, { email: string }>, res: Response) => {
 	const { email } = req.body;
-	
+
 	if (!email) {
 		return res.status(400).json({ message: 'Email needed for verification!' });
 	}
-	
+
 	try {
-		const verifiedEmail = User.findOne({ where: { email: email } });
+		const verifiedEmail = await User.findOne({ where: { email: email } });
 		if (!verifiedEmail) {
 			return res.status(404).json({ message: 'No matching email was found.' });
 		}
 
 		const resetToken = crypto.randomBytes(32).toString('hex');
 		const tokenExpiration = new Date();
-		tokenExpiration.setHours(tokenExpiration.getHours() + 1);
-		
-		// Need to create a new column for the reset password token column in the database
-		// user.reset 
+        tokenExpiration.setHours(tokenExpiration.getHours() + 1);
+
+        await verifiedEmail.update({
+            reset_password_token: resetToken,
+            reset_password_expires: tokenExpiration
+        });
+
+        const resetUrl = `${process.env.BASE_URL}/forgot-password?token=${resetToken}`;
+
+        const smtpPort = Number(process.env.SMTP_PORT);
+        const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: smtpPort,
+            secure: false,
+            auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS,
+            },
+        });
+
+        await transporter.sendMail({
+            from: '"Cyber Gaia Security" <no-reply@cybergaia.com>',
+            to: verifiedEmail.email,
+            subject: 'Password Reset Request',
+            text: `You requested a passoword reset! Please use the following link to set a new password: ${resetUrl}`,
+            html: `
+                <h3>Password Reset Request</h3>
+                <p>You requested a password reset for your account.</p>
+                <p>Click the link below to set a new password (valid for 1 hour):</p>
+                <a href="${resetUrl}" target="_blank">Reset Password</a>
+            `,
+        });
+
+        return res.status(200).json({
+            message: 'Recovery instructions initilized.'
+        });
 	} catch (error) {
 	 	console.error('Error in changing password for the account.', error);
         return res.status(500).json({ message: 'Internal Server Error' });
