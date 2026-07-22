@@ -80,11 +80,12 @@ export const deleteUser = async (req: Request<{ id: string }>, res: Response) =>
     try {
         const user = await User.findByPk(userId);
 
-        if (user) {
-            await user.update({ deletedAt: new Date()});
+        if (!user) {
+            return res.status(404).json({ message: 'User does not exist, unable to proceed with deletion.' })
         }
+        await user.update({ deletedAt: new Date()});
     } catch (error) {
-        console.error('Error in deleting user:', error);
+        console.error('Error in deleting user:', error);s
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }
@@ -111,9 +112,10 @@ export const forgotPassword = async (req: Request<{}, {}, { email: string }>, re
             reset_password_expires: tokenExpiration
         });
 
-        const resetUrl = `${process.env.BASE_URL}/forgot-password?token=${resetToken}`;
+        const resetUrl = `${process.env.BASE_URL}/reset-password?token=${resetToken}`;
 
         const smtpPort = Number(process.env.SMTP_PORT);
+
         const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port: smtpPort,
@@ -138,10 +140,23 @@ export const forgotPassword = async (req: Request<{}, {}, { email: string }>, re
         });
 
         return res.status(200).json({
-            message: 'Recovery instructions initilized.'
+            message: 'Recovery instructions initialized...'
         });
 	} catch (error) {
-	 	console.error('Error in changing password for the account.', error);
+	 	console.error('Error in verifying account.', error);
         return res.status(500).json({ message: 'Internal Server Error' });
 	}
+}
+
+export const resetPassword = async (req: Request, res: Response) => {
+    const { token, password } = req.query;
+    try {
+        const isTokenMatching = User.findOne({ where: { reset_password_token: token } });
+        if (!isTokenMatching) {
+            return res.status(400).json({ message: 'Reset token does not exist, please try requesting again.' });
+        }
+    } catch (error) {
+        console.error('Error in changing password for the account.', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
 }
