@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { User } from '../models/index.ts';
 import { RegisterInterface, changePasswordInterface } from '../interface/UserInterfaces.ts';
+import { Op } from 'sequelize';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
@@ -148,13 +149,33 @@ export const forgotPassword = async (req: Request<{}, {}, { email: string }>, re
 	}
 }
 
-export const resetPassword = async (req: Request, res: Response) => {
+export const resetPassword = async (req: Request<{}, {}, {}, { token: string, password: string }>, res: Response) => {
     const { token, password } = req.query;
+
+    if (!token || !password) {
+        return res.status(400).json({ message: 'Token and new password are required.' });
+    }
+
     try {
-        const isTokenMatching = User.findOne({ where: { reset_password_token: token } });
+        const isTokenMatching = await User.findOne({
+            where: {
+                reset_password_token: token,
+                reset_password_expires: {
+                    [Op.gt]: new Date()
+                }
+            }
+        });
+
         if (!isTokenMatching) {
-            return res.status(400).json({ message: 'Reset token does not exist, please try requesting again.' });
+            return res.status(400).json({ message: 'Reset token is invalid, please try requesting again.' });
         }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await User.update({
+            password: hashedPassword,
+            reset_password_token: null,
+            reset_password_expires: null
+        });
     } catch (error) {
         console.error('Error in changing password for the account.', error);
         return res.status(500).json({ message: 'Internal Server Error' });
