@@ -113,28 +113,28 @@ export const initUserModel = (sequelize: Sequelize) => {
 		allowNull: true,
 	}
 	}, {
-	sequelize,
-	tableName: 'users',
-	hooks: {
-		beforeCreate: async (user: User) => {
-			user.password = await bcrypt.hash(user.password, 10);
-		},
-		beforeUpdate: async (user: User) => {
-            if (user.changed('password')) {
-                console.log('[Password hook triggered]');
-				user.password = await bcrypt.hash(user.password, 10);
-			}
-		},
-	},
-	paranoid: true,
-	underscored: true,
-	defaultScope: {
-		attributes: { exclude: ['password'] }
-	},
-	scopes: {
-		withPassword: {
-			attributes: { include: ['password'] },
-		}
-	}
+    	sequelize,
+    	tableName: 'users',
+    	hooks: {
+    		beforeCreate: async (user: User) => {
+    			user.password = await bcrypt.hash(user.password, 10);
+    		},
+    		beforeUpdate: async (user: User) => {
+                if (user.changed('password')) {
+                    console.log('[Password hook triggered]');
+    				user.password = await bcrypt.hash(user.password, 10);
+    			}
+    		},
+    	},
+    	paranoid: true,
+    	underscored: true,
+    	defaultScope: {
+    		attributes: { exclude: ['password'] }
+    	},
+    	scopes: {
+    		withPassword: {
+    			attributes: { include: ['password'] },
+    		}
+    	}
 	});
 };

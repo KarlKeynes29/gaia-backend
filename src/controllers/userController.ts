@@ -157,7 +157,7 @@ export const resetPassword = async (req: Request<{}, {}, {}, { token: string, pa
     }
 
     try {
-        const isTokenMatching = await User.findOne({
+        const user = await User.findOne({
             where: {
                 reset_password_token: token,
                 reset_password_expires: {
@@ -166,16 +166,17 @@ export const resetPassword = async (req: Request<{}, {}, {}, { token: string, pa
             }
         });
 
-        if (!isTokenMatching) {
+        if (!user) {
             return res.status(400).json({ message: 'Reset token is invalid, please try requesting again.' });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await User.update({
-            password: hashedPassword,
+        await user.update({
+            password: password,
             reset_password_token: null,
             reset_password_expires: null
         });
+
+        res.status(200).json({ message: 'Succesfully updated password!' });
     } catch (error) {
         console.error('Error in changing password for the account.', error);
         return res.status(500).json({ message: 'Internal Server Error' });
