@@ -110,7 +110,7 @@ export const forgotPassword = async (req: Request<{}, {}, { email: string }>, re
 
         await verifiedEmail.update({
             reset_password_token: resetToken,
-            reset_password_expires: tokenExpiration
+            reset_password_expires: tokenExpiration.toISOString()
         });
 
         const resetUrl = `${process.env.BASE_URL}/reset-password?token=${resetToken}`;
@@ -176,9 +176,9 @@ export const resetPassword = async (req: Request<{}, {}, {}, { token: string, pa
             reset_password_expires: null
         });
 
-        res.status(200).json({ message: 'Succesfully updated password!' });
+        res.status(200).json({ message: 'Succesfully updated credential!' });
     } catch (error) {
-        console.error('Error in changing password for the account.', error);
+        console.error('Error in changing credential for the account.', error);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }

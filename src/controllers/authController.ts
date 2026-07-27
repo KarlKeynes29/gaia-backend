@@ -97,7 +97,7 @@ export const login = async (req: Request<{}, {}, LoginInterface>, res: Response)
                 ]
             }
         });
-        // Study note: the second condition only happens if the first one is falsy, meaning,
+
         if (!user || !(await user.validatePassword(password))) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }

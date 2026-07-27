@@ -6,7 +6,7 @@ const seed = async () => {
     try {
         await initializeDb();
 
-        console.log('Starting Seeding...'); 
+        console.log('Starting Seeding...');
 
         const user = await User.create({
             username: 'Gamer29',
@@ -42,14 +42,14 @@ const seed = async () => {
 
         const fullCart = await Cart.findOne({
             where: { userId: user.id },
-            include: [{ 
+            include: [{
                 model: CartItem,
-                include: [Game] 
+                include: [Game]
             }]
         });
 
         console.log('Cart Items found:', fullCart);
-        console.log('First Item in Cart is:', fullCart?.items[0]?.game.title);
+        // console.log('First Item in Cart is:', fullCart?.items[0]?.game.title);
 
     } catch (error) {
         console.error('Something went wrong while seeding the database:', error);
