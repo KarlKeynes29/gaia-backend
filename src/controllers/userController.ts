@@ -66,9 +66,7 @@ export const updateUserDetails = async (req: Request<{ id: string }, any, Partia
 			role: role
 		});
 
-        return res.json({
-            message: 'User details updated successfully!',
-		});
+        return res.json({ message: 'User details updated successfully!' });
 
     } catch (error) {
         console.error('Error in updating user details:', error);
