@@ -3,7 +3,6 @@ import { User } from '../models/index.ts';
 import { RegisterInterface, changePasswordInterface } from '../interface/UserInterfaces.ts';
 import { Op } from 'sequelize';
 import crypto from 'crypto';
-import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 
 export const getUserDetails = async (req: Request<{ id: string }>, res: Response) => {
