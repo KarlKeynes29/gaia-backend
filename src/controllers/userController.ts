@@ -22,27 +22,6 @@ export const getUserDetails = async (req: Request<{ id: string }>, res: Response
 	}
 };
 
-export const changePassword = async (req: Request<{ id: string }, {}, changePasswordInterface>, res: Response) => {
-	const { password } = req.body;
-	const { id } = req.params;
-
-	try {
-		const user = await User.findByPk(id);
-
-		if (!user) {
-			return res.status(404).json({ message: 'User not found!' });
-		}
-
-		await user.update({ password });
-
-		return res.status(200).json({ message: 'Password was successfully updated!' });
-
-	} catch (error) {
-		console.error('Error in changing password for user:', error);
-		return res.status(500).json({ message: 'Internal Server Error' });
-	}
-}
-
 export const updateUserDetails = async (req: Request<{ id: string }, any, Partial<RegisterInterface>>, res: Response) => {
     const { firstName, middleName, lastName, username,email, birthday, phoneNumber, address, role } = req.body;
     const { id } = req.params;
@@ -88,7 +67,7 @@ export const deleteUser = async (req: Request<{ id: string }>, res: Response) =>
     }
 }
 
-export const forgotPassword = async (req: Request<{}, {}, { email: string }>, res: Response) => {
+export const verifyPassword = async (req: Request<{}, {}, { email: string }>, res: Response) => {
 	const { email } = req.body;
 
 	if (!email) {

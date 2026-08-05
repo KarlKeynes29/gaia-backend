@@ -20,6 +20,13 @@ app.use('/api/v1/games', gameRouter);
 app.use('/api/v1/cart', cartRouter);
 app.use('/api/v1/users', userRouter);
 
+// Wildcard/generic express request handler.
+// app.use('/api/*', (req: Request, res: Response) => {
+//     res.status(404).json({
+//         message: ''
+//     });
+// });
+
 app.get('/', (req: Request, res: Response) => {
     res.send('Gaia Store API is running!');
 });
