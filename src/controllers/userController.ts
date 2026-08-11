@@ -125,8 +125,8 @@ export const verifyPassword = async (req: Request<{}, {}, { email: string }>, re
 	}
 }
 
-export const resetPassword = async (req: Request<{}, {}, {}, { token: string, password: string }>, res: Response) => {
-    const { token, password } = req.query;
+export const resetPassword = async (req: Request<{}, { token: string, password: string }>, res: Response) => {
+    const { token, password } = req.body;
 
     if (!token || !password) {
         return res.status(400).json({ message: 'Token and new password are required.' });
