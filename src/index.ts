@@ -15,13 +15,13 @@ const isProduction = process.env.NODE_ENV === 'production';
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/v1', authRouter);
+app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/games', gameRouter);
 app.use('/api/v1/cart', cartRouter);
 app.use('/api/v1/users', userRouter);
 
 // Wildcard/generic express request handler.
-// app.use('/api/*', (req: Request, res: Response) => {
+// app.use('/api/v1/*', (req: Request, res: Response) => {
 //     res.status(404).json({
 //         message: ''
 //     });

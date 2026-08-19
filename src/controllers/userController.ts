@@ -89,7 +89,7 @@ export const verifyPassword = async (req: Request<{}, {}, { email: string }>, re
             reset_password_expires: tokenExpiration.toISOString()
         });
 
-        const resetUrl = `${process.env.BASE_URL}/reset-password?token=${resetToken}`;
+        const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
         const smtpPort = Number(process.env.SMTP_PORT);
 
