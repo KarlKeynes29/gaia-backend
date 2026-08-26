@@ -120,3 +120,10 @@ export const login = async (req: Request<{}, {}, LoginInterface>, res: Response)
         return res.status(500).json({ message: 'Internal server error' });
     }
 }
+
+export const verifyResetPasswordToken = async (req: Request, res: Response) => {
+    const { userId, token } = req.body;
+
+
+
+}

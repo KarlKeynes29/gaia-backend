@@ -11,6 +11,7 @@ export interface RegisterInterface {
     role: string;
 }
 
-export interface changePasswordInterface {
+export interface resetPasswordInterface {
+    token: string;
 	password: string;
 }

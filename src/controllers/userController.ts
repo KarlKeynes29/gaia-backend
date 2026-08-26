@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { User } from '../models/index.ts';
-import { RegisterInterface, changePasswordInterface } from '../interface/UserInterfaces.ts';
+import { RegisterInterface, resetPasswordInterface } from '../interface/UserInterfaces.ts';
 import { Op } from 'sequelize';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
@@ -62,7 +62,7 @@ export const deleteUser = async (req: Request<{ id: string }>, res: Response) =>
         }
         await user.update({ deletedAt: new Date()});
     } catch (error) {
-        console.error('Error in deleting user:', error);s
+        console.error('Error in deleting user:', error);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }
@@ -107,10 +107,10 @@ export const verifyPassword = async (req: Request<{}, {}, { email: string }>, re
             from: '"Cyber Gaia Security" <no-reply@cybergaia.com>',
             to: verifiedEmail.email,
             subject: 'Password Reset Request',
-            text: `You requested a passoword reset! Please use the following link to set a new password: ${resetUrl}`,
+            text: `Request email for resetting of password`,
             html: `
                 <h3>Password Reset Request</h3>
-                <p>You requested a password reset for your account.</p>
+                <p>You requested a password reset! Please use the following link to set a new password for your account.</p>
                 <p>Click the link below to set a new password (valid for 1 hour):</p>
                 <a href="${resetUrl}" target="_blank">Reset Password</a>
             `,
@@ -125,14 +125,16 @@ export const verifyPassword = async (req: Request<{}, {}, { email: string }>, re
 	}
 }
 
-export const resetPassword = async (req: Request<{}, { token: string, password: string }>, res: Response) => {
-    const { token, password } = req.body;
+export const resetPassword = async (req: Request<{}, {}, resetPasswordInterface>, res: Response) => {
 
+    const { token, password } = req.body;
+    console.log(req.body);
     if (!token || !password) {
         return res.status(400).json({ message: 'Token and new password are required.' });
     }
 
     try {
+        console.log("boop 1");
         const user = await User.findOne({
             where: {
                 reset_password_token: token,
