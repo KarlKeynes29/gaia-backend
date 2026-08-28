@@ -75,7 +75,8 @@ export const verifyPassword = async (req: Request<{}, {}, { email: string }>, re
 	}
 
 	try {
-		const verifiedEmail = await User.findOne({ where: { email: email } });
+        const verifiedEmail = await User.findOne({ where: { email: email } });
+
 		if (!verifiedEmail) {
 			return res.status(404).json({ message: 'No matching email was found.' });
 		}
@@ -128,13 +129,12 @@ export const verifyPassword = async (req: Request<{}, {}, { email: string }>, re
 export const resetPassword = async (req: Request<{}, {}, resetPasswordInterface>, res: Response) => {
 
     const { token, password } = req.body;
-    console.log(req.body);
+
     if (!token || !password) {
         return res.status(400).json({ message: 'Token and new password are required.' });
     }
 
     try {
-        console.log("boop 1");
         const user = await User.findOne({
             where: {
                 reset_password_token: token,
