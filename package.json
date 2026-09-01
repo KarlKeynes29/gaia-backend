@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "db:test": "ts-node src/test-db.ts",
+    "db:test": "tsx src/test-db.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsx src/index.ts",
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "db:seed": "tsx src/utils/seedData.ts"
   },
   "keywords": [],
   "author": "",

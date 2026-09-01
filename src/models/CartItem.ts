@@ -1,11 +1,11 @@
 import { Model, Sequelize, DataTypes } from 'sequelize';
-import { Game } from './index';
 
 export class CartItem extends Model {
     declare id: string;
     declare cart_id: string;
-    declare game_id: string;
-    declare quantity: string;
+    declare game_id: string | null;
+    declare item_id: string | null;
+    declare quantity: number;
 }
 
 export const initCartItemModel = (sequelize: Sequelize) => {
@@ -19,14 +19,18 @@ export const initCartItemModel = (sequelize: Sequelize) => {
             type: DataTypes.UUID,
             allowNull: false,
         },
+        item_id: {
+            type: DataTypes.UUID,
+            allowNull: true,
+        },
         game_id: {
             type: DataTypes.UUID,
-            allowNull: false,
+            allowNull: true
         },
         quantity: {
             type: DataTypes.INTEGER,
-            defaultValue: null,
-            allowNull: true,
+            defaultValue: 1,
+            allowNull: false,
         },
     }, {
         sequelize,

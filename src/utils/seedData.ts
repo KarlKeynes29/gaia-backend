@@ -1,55 +1,138 @@
 import { faker } from '@faker-js/faker';
+import { sequelize, User, Game, MerchItem, Cart, CartItem } from '../models';
 
-export interface Game {
-	id: string;
-	title: string;
-	description: string;
-	genre: string;
-	image: string;
-	price: number;
-	is_available: boolean;
-	is_featured: boolean;
-}
+export const seedDatabase = async () => {
+  try {
+    console.log('Starting database seeding...');
 
-const GENRES = ['Action', 'RPG', 'Strategy', 'Cyberpunk', 'Sci-Fi', 'Horror', 'Adventure'];
-const MERCH_CATEGORIES = ['Apparel', 'Collectibles', 'Posters', 'Hardware', 'Accessories'];
+    await sequelize.authenticate();
+    await sequelize.sync({ force: true });
 
-export const generateFakeGames = (count: number = 10) => {
-	return Array.from({ length: count }, () => {
-		id: faker.string.uuid(),
-	    title: `${faker.word.adjective()} ${faker.word.noun()}: ${faker.company.buzzNoun()}`,
-	    description: faker.lorem.paragraph(),
-		genre: faker.helpers.arrayElement(GENRES),
-		image: `https://picsum.photos/seed/${faker.string.alphanumeric(8)}/600/400`,
-	    price: parseFloat(faker.commerce.price({ min: 19, max: 69, dec: 2 })),
-		is_available: faker.datatype.boolean(0.60),
-	    is_featured: faker.datatype.boolean(0.3) // ~30% chance of being featured
-	})
-}
+    console.log('Creating users...');
+    const users = [];
 
-export interface MerchItem {
-	id: string;
-	title: string;
-	description: string;
-	source: string;
-	image: string;
-	price: number;
-	is_available: boolean;
-	is_featured: boolean;
-	stock_quantity: number
-}
+    const adminUser = await User.create({
+      first_name: 'Admin',
+      middle_name: null,
+      last_name: 'User',
+      username: 'admin',
+      email: 'admin@example.com',
+      password: 'password123',
+      birthday: faker.date.birthdate({ min: 18, max: 60, mode: 'age' }),
+      phone_number: faker.phone.number(),
+      address: faker.location.streetAddress({ useFullAddress: true }),
+      role: 'ADMIN',
+    });
+    users.push(adminUser);
 
-export const generateFakeMerch = (count: number = 10): MerchItem[] => {
-  return Array.from({ length: count }, () => ({
-    id: faker.string.uuid(),
-	title: `${faker.word.adjective()} ${faker.commerce.productName()}`,
-	description: faker.commerce.productDescription(),
-	source: faker.company.name(),
-	image: `https://picsum.photos/seed/${faker.string.alphanumeric(8)}/600/400`,
-	
-    category: faker.helpers.arrayElement(MERCH_CATEGORIES),
-    price: parseFloat(faker.commerce.price({ min: 15, max: 120, dec: 2 })),
-    is_featured: faker.datatype.boolean(0.2),
-    stock_quantity: faker.number.int({ min: 5, max: 100 })
-  }));
+    for (let i = 0; i < 20; i++) {
+      const user = await User.create({
+        first_name: faker.person.firstName(),
+        middle_name: faker.helpers.maybe(() => faker.person.middleName(), { probability: 0.5 }) || null,
+        last_name: faker.person.lastName(),
+        username: faker.internet.username(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        birthday: faker.date.birthdate({ min: 18, max: 50, mode: 'age' }),
+        phone_number: faker.phone.number(),
+        address: faker.location.streetAddress({ useFullAddress: true }),
+        role: 'USER',
+        reset_password_token: null,
+        reset_password_expires: null,
+      });
+      users.push(user);
+    }
+
+    console.log('Creating games...');
+    const games = [];
+    const genres = ['Action', 'RPG', 'Strategy', 'Indie', 'Adventure', 'FPS'];
+    for (let i = 0; i < 20; i++) {
+      const game = await Game.create({
+        title: `${faker.word.adjective()} ${faker.word.noun()}`,
+        description: faker.lorem.paragraph(),
+        genre: faker.helpers.arrayElement(genres),
+        image: faker.image.url({ width: 400, height: 600, }),
+        price: parseFloat(faker.commerce.price({ min: 9.99, max: 69.99 })),
+        is_available: faker.datatype.boolean({ probability: 0.9 }),
+        is_featured: faker.datatype.boolean({ probability: 0.25 }),
+      });
+      games.push(game);
+    }
+
+    console.log('Creating merch items...');
+    const merchItems = [];
+    const sources = ['Cyberpunk Collection', 'Retro Series', 'Official Apparel', 'Limited Edition'];
+
+    for (let i = 0; i < 20; i++) {
+      const merch = await MerchItem.create({
+        title: faker.commerce.productName(),
+        description: faker.lorem.sentence(),
+        source: faker.helpers.arrayElement(sources),
+        image: faker.image.url({ width: 400, height: 400 }),
+        price: parseFloat(faker.commerce.price({ min: 14.99, max: 119.99 })),
+        is_available: faker.datatype.boolean({ probability: 0.85 }),
+        is_featured: faker.datatype.boolean({ probability: 0.2 }),
+        stock_quantity: faker.number.int({ min: 0, max: 100 }),
+      });
+      merchItems.push(merch);
+    }
+
+      console.log('Creating carts and cart items...');
+      for (const user of users) {
+        const cart = await Cart.create({
+            user_id: user.id,
+            status: 'ACTIVE',
+        });``
+
+
+    console.log('Creating carts and cart items...');
+    for (const user of users) {
+
+      const cart = await Cart.create({
+        user_id: user.id,
+        status: 'ACTIVE',
+      });
+
+      const randomGame = faker.helpers.arrayElement(games);
+      await CartItem.create({
+        cart_id: cart.id,
+        game_id: randomGame.id,
+        item_id: null,
+        quantity: faker.number.int({ min: 1, max: 2 }),
+      });
+
+      const randomMerch = faker.helpers.arrayElement(merchItems);
+      await CartItem.create({
+        cart_id: cart.id,
+        game_id: null,
+        item_id: randomMerch.id,
+        quantity: faker.number.int({ min: 1, max: 3 }),
+      });
+    }
+
+      const randomGame = faker.helpers.arrayElement(games);
+      await CartItem.create({
+        cart_id: cart.id,
+        game_id: randomGame.id,
+        item_id: null,
+        quantity: faker.number.int({ min: 1, max: 2 }),
+      });
+
+      const randomMerch = faker.helpers.arrayElement(merchItems);
+      await CartItem.create({
+        cart_id: cart.id,
+        game_id: null,
+        item_id: randomMerch.id,
+        quantity: faker.number.int({ min: 1, max: 3 }),
+      });
+    }
+
+    console.log('✅ Database seeded successfully!');
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Error seeding database:', error);
+    process.exit(1);
+  }
 };
+
+seedDatabase();

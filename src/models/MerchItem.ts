@@ -53,7 +53,7 @@ export const initMerchItemModel = (sequelize: Sequelize) => {
             defaultValue: false
 		},
 		stock_quantity: {
-			type: DataTypes.NUMBER,
+			type: DataTypes.INTEGER,
 			defaultValue: 0,
         }
     }, {

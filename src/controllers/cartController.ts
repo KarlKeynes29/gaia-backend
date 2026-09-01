@@ -4,7 +4,6 @@ import { CartItem } from '../models/CartItem';
 
 export const getCart = async (req: Request, res: Response) => {
     try {
-
         const userId = req.user!.id
         const cart = await Cart.findOne({
             where: { userId: userId }
@@ -39,9 +38,9 @@ export const removeFromCart = async (req: Request, res: Response) => {
 
         await item.destroy();
 
-        return res.status(200).json({ message: 'Item removed' });
+        return res.status(200).json({ message: 'Item removed.' });
     } catch (error) {
-        return res.status(500).json({ message: 'Error in removing item' });
+        return res.status(500).json({ message: 'Error in removing item.' });
     }
 }
 
@@ -51,12 +50,12 @@ export const clearCart = async (req: Request, res: Response) => {
         const cart = Cart.findOne({ where: { userId } });
 
         if (!cart) {
-            return res.status(404).json({ message: 'Error in clearing  cart.' });
+            return res.status(404).json({ message: 'Cart could not be found.' });
         }
 
         await Cart.destroy({ where: { userId }})
     } catch (error) {
-
+        return res.status(500).json({ message: 'Error in clearing cart.' });
     }
 
 }
