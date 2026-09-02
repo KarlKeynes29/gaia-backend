@@ -4,7 +4,8 @@ import { verify, isAdmin } from '../controllers/authController'
 
 const router = Router();
 
-router.get('/', gameController.getAllGames);
+router.get('/', gameController.filteredSearch);
+router.get('/')
 router.post('/add', verify, isAdmin, gameController.addGame);
 router.patch('/:id', verify, isAdmin, gameController.editGameDetails);
 router.delete('/:id', verify, isAdmin, gameController.deleteGame);

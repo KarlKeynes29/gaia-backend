@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import { Request, Response } from 'express';
 import { Game } from '../models/Game.ts';
-import { GameInterface, filterGameInterface, GameResponseInterface } from '../interface/GameInterface.ts';
+import { GameInterface, filteredSearchInterface, GameResponseInterface } from '../interface/GameInterface.ts';
 
 // Not needed anymore but I'll be commenting this out for reference.
 // Made a types.d.ts file to declare the Request model to include an extra user object.
@@ -13,25 +13,25 @@ import { GameInterface, filterGameInterface, GameResponseInterface } from '../in
 //     };
 // }
 
-export const getAllGames = async (req: Request, res: Response) => {
-    try {
-        const games = await Game.findAll();
+// export const getAllGames = async (req: Request, res: Response) => {
+//     try {
+//         const games = await Game.findAll();
 
-        if (games.length === 0) {
-            return res.status(404).json({ message: 'No games found...' });
-        }
+//         if (games.length === 0) {
+//             return res.status(404).json({ message: 'No games found...' });
+//         }
 
-        res.status(200).json({
-            message: 'Successfully fetched all games!',
-            games: games
-        });
-    } catch (error) {
-        console.error('Error in fetching all games!', error);
-        res.status(404).json({ message: 'Internal server error while fetching.' });
-    }
-}
+//         res.status(200).json({
+//             message: 'Successfully fetched all games!',
+//             games: games
+//         });
+//     } catch (error) {
+//         console.error('Error in fetching all games!', error);
+//         res.status(404).json({ message: 'Internal server error while fetching.' });
+//     }
+// }
 
-export const filterGame = async (req: Request<{}, {}, {}, filterGameInterface>, res: Response) => {
+export const filteredSearch = async (req: Request<{}, {}, {}, filteredSearchInterface>, res: Response) => {
     const { searchValue, genre, is_featured, is_available, priceFrom, priceTo, page, limit, sortBy } = req.query;
     const whereClause: any = {};
     try {
@@ -51,6 +51,8 @@ export const filterGame = async (req: Request<{}, {}, {}, filterGameInterface>, 
             if (priceFrom) whereClause.price[Op.gte] = Number(priceFrom);
             if (priceTo) whereClause.price[Op.lte] = Number(priceTo);
         }
+
+        if (is_featured) whereClause.is_featured = { [Op.]}
 
         const pageSize = Number(limit) || 12;
         const pageNumber = Number(page) || 1;
@@ -152,6 +154,6 @@ export const deleteGame = async (req: Request<{ id: string }>, res: Response) =>
         return res.status(200).json({ message: 'Successfully deleted the game!' });
     } catch (error) {
         console.error("Error in deleting game...", error);
-        return res.status(500).json({ message: 'Interna server error while deleting.' });
+        return res.status(500).json({ message: 'Internal server error while deleting.' });
     }
 }

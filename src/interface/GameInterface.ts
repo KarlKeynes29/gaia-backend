@@ -8,7 +8,7 @@ export interface GameInterface {
     is_featured?: boolean;
 }
 
-export interface filterGameInterface {
+export interface filteredSearchInterface {
     searchValue?: string;
     genre?: string;
     is_featured?: string;
