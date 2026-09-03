@@ -31,8 +31,22 @@ import { GameInterface, filteredSearchInterface, GameResponseInterface } from '.
 //     }
 // }
 
-export const filteredSearch = async (req: Request<{}, {}, {}, filteredSearchInterface>, res: Response) => {
-    const { searchValue, genre, is_featured, is_available, priceFrom, priceTo, page, limit, sortBy } = req.query;
+export const filteredSearch = async (
+	req: Request<{}, {}, {}, filteredSearchInterface>,
+	res: Response
+) => {
+	const {
+		searchValue,
+		genre,
+		is_featured,
+		is_available,
+		priceFrom,
+		priceTo,
+		page,
+		limit,
+		sortBy
+	} = req.query;
+	
     const whereClause: any = {};
     try {
         if (searchValue) {
@@ -51,8 +65,6 @@ export const filteredSearch = async (req: Request<{}, {}, {}, filteredSearchInte
             if (priceFrom) whereClause.price[Op.gte] = Number(priceFrom);
             if (priceTo) whereClause.price[Op.lte] = Number(priceTo);
         }
-
-        if (is_featured) whereClause.is_featured = { [Op.]}
 
         const pageSize = Number(limit) || 12;
         const pageNumber = Number(page) || 1;
