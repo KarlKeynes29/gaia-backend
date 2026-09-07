@@ -13,23 +13,23 @@ import { GameInterface, filteredSearchInterface, GameResponseInterface } from '.
 //     };
 // }
 
-// export const getAllGames = async (req: Request, res: Response) => {
-//     try {
-//         const games = await Game.findAll();
+export const getAllGames = async (req: Request, res: Response) => {
+    try {
+        const games = await Game.findAll();
 
-//         if (games.length === 0) {
-//             return res.status(404).json({ message: 'No games found...' });
-//         }
+        if (games.length === 0) {
+            return res.status(404).json({ message: 'No games found...' });
+        }
 
-//         res.status(200).json({
-//             message: 'Successfully fetched all games!',
-//             games: games
-//         });
-//     } catch (error) {
-//         console.error('Error in fetching all games!', error);
-//         res.status(404).json({ message: 'Internal server error while fetching.' });
-//     }
-// }
+        res.status(200).json({
+            message: 'Successfully fetched all games!',
+            games: games
+        });
+    } catch (error) {
+        console.error('Error in fetching all games!', error);
+        res.status(404).json({ message: 'Internal server error while fetching.' });
+    }
+}
 
 export const filteredSearch = async (
 	req: Request<{}, {}, {}, filteredSearchInterface>,
