@@ -26,3 +26,4 @@ export const getAllProducts = async (req: Request<{type: string}, {}, {}, Filter
 
 }
 const TargetModel = getModel('game');
+type Blob<T> = T extends Promise(...args: any[]) => infer R ? R : never;
