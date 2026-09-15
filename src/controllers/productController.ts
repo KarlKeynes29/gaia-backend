@@ -88,6 +88,7 @@ const getProductById = async (req: Request<{ type: string, id: string }>, res: R
             data: product,
         });
     } catch (error) {
-
+        console.error('Error while fetching the product!', error);
+        res.status(500).json({ message: 'Internal server error while fetching the product.' });
     }
 };
