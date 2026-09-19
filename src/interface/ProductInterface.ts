@@ -1,8 +1,8 @@
-export interface GameInterface {
+export interface ProductInterface {
     title?: string;
     description?: string;
     price?: number;
-    genre?: string;
+    source?: string;
     image?: string;
     is_available?: boolean;
     is_featured?: boolean;
@@ -20,7 +20,7 @@ export interface filteredSearchInterface {
     sortBy?: string;
 }
 
-export interface GameResponseInterface {
+export interface ProductResponseInterface {
     message: string;
     title?: string;
     price?: number;
