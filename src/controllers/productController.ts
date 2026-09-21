@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Op, Order, ModelStatic, Model } from 'sequelize';
 import { Game, MerchItem } from '../../src/models/index';
 import { ProductInterface } from '../interface/ProductInterface';
+import { get } from 'https';
 
 const getModel = (type: string): ModelStatic<Model> | null => {
     const properType = type.toLowerCase();
@@ -24,36 +25,21 @@ interface FilterQueryParams {
 }
 
 export const getAllProducts = async (
-    req: Request<{ type: string }, {}, {}, FilterQueryParams>,
+    req: Request<{}, {}, {}, FilterQueryParams>,
     res: Response
 ) => {
-    const { type } = req.params;
-    const { } = req.query;
-
-    const targetModel = getModel(type);
-
-    // Currently just Game and MerchItem
-    if (!targetModel) {
-        return res.status(400).json({
-            success: false,
-            message: 'Invalid product type!',
-        });
-    }
-
     try {
-        const products = await targetModel.findAll();
+		const [games, merch] = await Promise.all([
+			Game.findAll(),
+			MerchItem.findAll()
+       	]);
 
-        if (!products) {
-            return res.status(200).json({
-                success: true,
-                message: 'No products found.',
-                data: [],
-            });
-        }
+		const allProducts = [...games, ...merch];
+		
         return res.status(200).json({
             success: true,
             message: 'Products successfully fetched!',
-            data: products,
+            data: allProducts,
         });
     } catch (error) {
         console.error(`Error in fetching the products.`, error);
@@ -63,6 +49,20 @@ export const getAllProducts = async (
         });
     }
 };
+
+// Currently working on this
+export const searchProduct = async (req: Request, res: Response) => {
+	const { q, minPrice, maxPrice } = req.query;
+	const whereClause: Record<string, any> = {};
+}
+	const page = Number(req.query.page) || 1;
+	const limit = Number(req.query.limit) || 10; 
+	try {
+	
+	} catch (error) {
+		
+	}
+}
 
 const getProductById = async (req: Request<{ type: string, id: string }>, res: Response) => {
     const { type, id } = req.params;
@@ -80,7 +80,7 @@ const getProductById = async (req: Request<{ type: string, id: string }>, res: R
         if (!product) {
             return res.status(404).json({
                success: false,
-               message: `Product with ID: ${id} not found.`
+               	message: `${type.charAt(0) + type.slice(1)} with ID: ${id} was not found.`,
             });
         }
         return res.status(200).json({
@@ -103,7 +103,7 @@ export const addProduct = async (req: Request<{}, {}, ProductInterface, { type: 
     if (!targetModel) {
         return res.status(400).json({
             success: false,
-            message: 'Invalid product type provided in query parameters.',
+            message: 'Invalid product type!',
         });
     }
 
@@ -119,4 +119,66 @@ export const addProduct = async (req: Request<{}, {}, ProductInterface, { type: 
         console.error('Error in adding the game!', error);
         return res.status(500).json({ message: 'Internal server error while adding.' });
     }
+}
+
+export const deleteProduct = async (req: Request<{type: string, id: string}>, res: Response) => {
+	const { type, id } = req.params;
+	const targetModel = getModel(type);
+	
+	if (!targetModel) { 
+	 	return res.status(400).json({
+            success: false,
+            message: 'Invalid product type!',
+        });
+	}
+	try {
+		const product = await targetModel.findByPk(id);
+
+		if (!product) { 
+			return res.status(404).json({
+				success: false,
+				message: `${type.charAt(0) + type.slice(1)} with ID: ${id} was not found.`,
+			});
+		}
+		await product.destroy();
+		
+	    return res.status(200).json({
+	      success: true,
+	      message: `${type.charAt(0).toUpperCase() + type.slice(1)} product deleted successfully!`,
+	    });
+	} catch (error) {
+	    console.error('Error in adding the game!', error);
+	    return res.status(500).json({ message: 'Internal server error while deleting.' });
+	}
+}
+
+export const editProduct = async (req: Request<{ type: string, id: string}>, res: Response) => {
+	const { type, id } = req.params;
+	const targetModel = getModel(type);
+
+	if (!targetModel) { 
+	 	return res.status(400).json({
+            success: false,
+            message: 'Invalid product type!',
+        });
+	}
+
+	const product = await targetModel.findByPk(id);
+	if (!product) {
+		return res.status(404).json({
+			success: false,
+			message: `${type.charAt(0)} + ${type.slice(1)} with ID: ${id} was not found.}`
+		});
+	}
+	try {
+		const updatedProduct = product.update(req.body as any);
+
+		return res.status(200).json({
+	      success: true,
+	      message: `${type.charAt(0).toUpperCase()}${type.slice(1)} updated successfully!`,
+	      data: updatedProduct,
+    	});
+	} catch (error) {
+		
+	}
 }
