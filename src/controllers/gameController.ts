@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import { Request, Response } from 'express';
 import { Game } from '../models/Game.ts';
-import { GameInterface, filteredSearchInterface, GameResponseInterface } from '../interface/GameInterface.ts';
+import { ProductInterface, filteredSearchInterface, ProductResponseInterface } from '../interface/ProductInterface.ts';
 
 // Not needed anymore but I'll be commenting this out for reference.
 // Made a types.d.ts file to declare the Request model to include an extra user object.
@@ -46,7 +46,7 @@ export const filteredSearch = async (
 		limit,
 		sortBy
 	} = req.query;
-	
+
     const whereClause: any = {};
     try {
         if (searchValue) {

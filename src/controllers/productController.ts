@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Op, Order, ModelStatic, Model } from 'sequelize';
 import { Game, MerchItem } from '../../src/models/index';
+import { ProductInterface } from '../interface/ProductInterface';
 
 const getModel = (type: string): ModelStatic<Model> | null => {
     const properType = type.toLowerCase();
@@ -92,3 +93,30 @@ const getProductById = async (req: Request<{ type: string, id: string }>, res: R
         res.status(500).json({ message: 'Internal server error while fetching the product.' });
     }
 };
+
+export const addProduct = async (req: Request<{}, {}, ProductInterface, { type: string }>, res: Response) => {
+    const { type } = req.query;
+    const { title, description, price, source, image, is_available, is_featured } = req.body;
+
+    const targetModel = getModel(type);
+
+    if (!targetModel) {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid product type provided in query parameters.',
+        });
+    }
+
+    try {
+        // Note: We assert as any strips away the strict, static shape requirements of the specific model. (I'm implementing one that adjusts dynamically.)
+        const product = await targetModel.create(req.body as any);
+
+        return res.status(201).json({
+            message: `${type} was added successfully!`,
+            data: product
+        });
+    } catch (error) {
+        console.error('Error in adding the game!', error);
+        return res.status(500).json({ message: 'Internal server error while adding.' });
+    }
+}
