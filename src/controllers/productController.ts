@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { Op, Order, ModelStatic, Model } from 'sequelize';
+import { Op, Order, ModelStatic, Model, WhereOptions, WhereAttributeHash } from 'sequelize';
 import { Game, MerchItem } from '../../src/models/index';
 import { ProductInterface } from '../interface/ProductInterface';
-import { get } from 'https';
+import { Where } from 'sequelize/lib/utils';
 
 const getModel = (type: string): ModelStatic<Model> | null => {
     const properType = type.toLowerCase();
@@ -50,15 +50,29 @@ export const getAllProducts = async (
     }
 };
 
+interface SearchInterface {
+	q?: string;
+	minPrice?: string;
+	maxPrice?: string;
+}
+
 // Currently working on this
 export const searchProduct = async (req: Request, res: Response) => {
-	const { q, minPrice, maxPrice } = req.query;
-	const whereClause: Record<string, any> = {};
-}
-	const page = Number(req.query.page) || 1;
-	const limit = Number(req.query.limit) || 10; 
-	try {
+	const { q, minPrice, maxPrice, page, } = req.query;
+	// const whereClause: Record<string, any> = {};
+	const whereClause: WhereOptions = {};
+	// const page = Number(req.query.page) || 1;
+	// const limit = Number(req.query.limit) || 10;
+
+	if (q) {
+		(whereClause as Record<symbol, any>)[Op.or] = [
+			{ title: { [Op.iLike]: `%${q}%` } },
+			{ description: { [Op.iLike]: `%${q}%` } },
+		];
+	}
 	
+	try {
+		
 	} catch (error) {
 		
 	}
