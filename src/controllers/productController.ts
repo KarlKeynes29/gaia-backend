@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { Op, Order, ModelStatic, Model, WhereOptions, WhereAttributeHash } from 'sequelize';
-import { Game, MerchItem } from '../../src/models/index';
-import { ProductInterface } from '../interface/ProductInterface';
 import { Where } from 'sequelize/lib/utils';
+import { Game, MerchItem } from '../../src/models/index';
+import { ProductInterface, SearchInterface } from '../interface/ProductInterface';
 
 const getModel = (type: string): ModelStatic<Model> | null => {
     const properType = type.toLowerCase();
@@ -50,33 +50,62 @@ export const getAllProducts = async (
     }
 };
 
-interface SearchInterface {
-	q?: string;
-	minPrice?: string;
-	maxPrice?: string;
-}
-
-// Currently working on this
 export const searchProduct = async (req: Request, res: Response) => {
-	const { q, minPrice, maxPrice, page, } = req.query;
-	// const whereClause: Record<string, any> = {};
-	const whereClause: WhereOptions = {};
-	// const page = Number(req.query.page) || 1;
-	// const limit = Number(req.query.limit) || 10;
+	const { q, minPrice, maxPrice } = req.query;
 
+	const page = Math.max(1, Number(req.query.page) || 1);
+	const limit = Math.max(1, Number(req.query.limit) || 10);
+	const offset = (page - 1) * limit;
+	
+	const whereClause: WhereOptions = {};
+	
 	if (q) {
 		(whereClause as Record<symbol, any>)[Op.or] = [
 			{ title: { [Op.iLike]: `%${q}%` } },
 			{ description: { [Op.iLike]: `%${q}%` } },
 		];
 	}
+
+	if (minPrice || maxPrice) {
+		const priceFilter: Record<symbol, number> = {};
+		
+		if (minPrice) {
+			priceFilter[Op.gte] = Number(minPrice);
+		}
+	
+		if (maxPrice) {
+			priceFilter[Op.lte] = Number(maxPrice);
+		}
+		
+		(whereClause as Record<string, any>).price = priceFilter;
+	}
 	
 	try {
+		const [games, merch] = await Promise.all([
+			Game.findAll({ where: whereClause, limit, offset }),
+			MerchItem.findAll({ where: whereClause, limit, offset }),
+		]);
+		
+		const allProducts = [...games, ...merch];
+
+		return res.status(200).json({
+			message: 'Products successfully fetched!',
+			pagination: {
+				page,
+				limit,
+				totalFetched: allProducts.length,
+			},
+			data: allProducts,
+		})
 		
 	} catch (error) {
-		
+		console.error('Error executing product search:', error);
+		return res.status(500).json({
+			success: false,
+			message: 'Failed to retrieve products due to a server error.',
+		});
 	}
-}
+};
 
 const getProductById = async (req: Request<{ type: string, id: string }>, res: Response) => {
     const { type, id } = req.params;

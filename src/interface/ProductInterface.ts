@@ -25,3 +25,9 @@ export interface ProductResponseInterface {
     title?: string;
     price?: number;
 }
+
+export interface SearchInterface {
+	q?: string;
+	minPrice?: string;
+	maxPrice?: string;
+}
