@@ -25,7 +25,7 @@ export const seedDatabase = async () => {
     });
     users.push(adminUser);
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 60; i++) {
       const user = await User.create({
         first_name: faker.person.firstName(),
         middle_name: faker.helpers.maybe(() => faker.person.middleName(), { probability: 0.5 }) || null,
@@ -46,7 +46,7 @@ export const seedDatabase = async () => {
     console.log('Creating games...');
     const games = [];
     const genres = ['Action', 'RPG', 'Strategy', 'Indie', 'Adventure', 'FPS'];
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 60; i++) {
       const game = await Game.create({
         title: `${faker.word.adjective()} ${faker.word.noun()}`,
         description: faker.lorem.paragraph(),
@@ -63,7 +63,7 @@ export const seedDatabase = async () => {
     const merchItems = [];
     const sources = ['Cyberpunk Collection', 'Retro Series', 'Official Apparel', 'Limited Edition'];
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 60; i++) {
       const merch = await MerchItem.create({
         title: faker.commerce.productName(),
         description: faker.lorem.sentence(),
